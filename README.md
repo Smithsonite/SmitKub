@@ -6,6 +6,9 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [**Components**](#components)
 - [**Home Network Setup**](#home-network-setup)
 - [**Ansible Setup**](#ansible-setup)
+  - [**RPI Setup ***](#rpi-setup-)
+    - [**Control system "Autobot"**](#control-system-autobot)
+    - [**Worker Systems**](#worker-systems)
 - [ScratchNotes](#scratchnotes)
 
 
@@ -42,6 +45,34 @@ blockquote {
 # **Ansible Setup**
 The control pane is autobot.smithsonite.home. From this system we can control the other 3. 
 Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under ansible SSH in keeper). This keypair is to be uploaded to the RPI's for the ansible users.
+
+## **RPI Setup ***
+The pi's are configured with ubuntu 22.04 and with my own SSH keypair with the user csmithson. 
+Additional users will be configured as needed. The first user should also be "ansible".
+
+### **Control system "Autobot"**
+
+ ```
+ sudo useradd -d /home/ansible -m -s/bin/bash ansible
+ sudo mkdir /home/ansible/.ssh
+At this time, copy the id_rsa and id_rsa.pub files from keeper into the /home/ansible/.ssh directory.
+ sudo chmod 600 /home/ansible/.ssh/id_rsa
+ sudo chmod 644 /home/ansible/.ssh/id_rsa.pub
+ sudo chown ansible:ansible /home/ansible/.ssh -R
+ echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+ ```
+
+### **Worker Systems**
+
+ ```
+ sudo useradd -d /home/ansible -m -s/bin/bash ansible
+ sudo mkdir /home/ansible/.ssh
+ echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC+U3naODIjFl07dJ9YzYUEZx7yIITCLMRy2ijEWkrrxRZgkaq/ZfAV9KaHQoCEzDtITosXIy4yDbgk4dYJw+1tDfbB3U3VUde2SaYUD3YWHyCezHhlafKdjacXZYS9fdLq0iagPs0+Rs7ORpLaiKhH78XPG4tN6ead4dG/7roTCNG67pqD7yWUL/AYe4qVMNwGNwiBG+0+CQKH2FKkhXKhDLY1r+vizf7mkehczbaF75EJbe/FxPIUoxs8GL5CFOJIsK71KW9AHuQAXmBec1iVvk9GcV4UX26ejpkOQvWRKUjTK0uXdAF1jsKQLHKbFUhSAi51H3ZZShv5v50oQAkWEULxjZ5CYfZIpsVqOZOldcxW4kYPg+L93ArvMwNhV7kKxuL88kG5Sp24QlrJ7l2L5THT2IfmANz2uF8c7HuUTwy+10iN1x+wZpeTqVktvP9N8DokrdqT20q0VqLuo1oAZloeyCJGvEj0LLMr3paSTiNs5z7GF8+PfzqO7GhhZtoWqSn9VmNHLPoAYox8lyyi1WpCyt/bQh5iIwWoC4pWWyn57RHhyGiaLfoFBOcLvSFwgXyV6CJr8g7f2kKgowyzxteqDieVR8c9XlKJdVgvA+tJlGjQbP2+zgquazqOv+4wHwJKh1tjTzrCqHv27/lNHr2ngTXDbuHuTfFv9Y4Zrw== ansible@autobot | sudo tee /home/ansible/.ssh/authorized_keys
+ sudo chmod 600 /home/ansible/.ssh/authorized_keys
+ sudo chown ansible:ansible /home/ansible/.ssh -R
+ echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+ ```
+The user may be assumed locally by 
 
 
 # ScratchNotes
