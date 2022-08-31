@@ -6,7 +6,7 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [**Components**](#components)
 - [**Home Network Setup**](#home-network-setup)
 - [**Ansible Setup**](#ansible-setup)
-  - [**RPI Setup ***](#rpi-setup-)
+  - [**RPI Setup**](#rpi-setup)
     - [**Control system "Autobot"**](#control-system-autobot)
     - [**Worker Systems**](#worker-systems)
 - [ScratchNotes](#scratchnotes)
@@ -46,9 +46,9 @@ blockquote {
 The control pane is autobot.smithsonite.home. From this system we can control the other 3. 
 Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under ansible SSH in keeper). This keypair is to be uploaded to the RPI's for the ansible users.
 
-## **RPI Setup ***
-The pi's are configured with ubuntu 22.04 and with my own SSH keypair with the user csmithson. 
-Additional users will be configured as needed. The first user should also be "ansible".
+## **RPI Setup**
+The pi's are configured with ubuntu 22.04 and with my own SSH keypair with the user csmithson and the campsmit network.
+Additional users will be configured as needed. The first user should be "ansible".
 
 ### **Control system "Autobot"**
 
@@ -60,7 +60,14 @@ At this time, copy the id_rsa and id_rsa.pub files from keeper into the /home/an
  sudo chmod 644 /home/ansible/.ssh/id_rsa.pub
  sudo chown ansible:ansible /home/ansible/.ssh -R
  echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+ sudo apt install python3-pip
  ```
+The user may be assumed locally by executing
+```
+sudo su
+su ansible
+```
+
 
 ### **Worker Systems**
 
@@ -71,8 +78,14 @@ At this time, copy the id_rsa and id_rsa.pub files from keeper into the /home/an
  sudo chmod 600 /home/ansible/.ssh/authorized_keys
  sudo chown ansible:ansible /home/ansible/.ssh -R
  echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+ sudo apt install python3-pip
  ```
-The user may be assumed locally by 
+The user may be assumed locally by executing
+```
+sudo su
+su ansible
+```
+
 
 
 # ScratchNotes
