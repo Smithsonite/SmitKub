@@ -12,16 +12,16 @@
 
     - name: Copy fancontrol files
       copy:
-        src: {{ items.src }}
-        dest: {{ items.dest }}
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
         owner: root
         group: root
-        mode: u=rwxr, g=xr, o=x
+        mode: u=rwxr,g=r,o=x
       with_items:
         - src: /git/picool/fancontrol.py
-          dest: /usr/loca/bin/fancontrol.py
+          dest: /usr/local/bin/fancontrol.py
         - src: /git/picool/requirements.txt
-          dest: /home/ansible/picool/requirements.txt
+          dest: /home/ansible/picool/
         - src: /git/picool/fancontrol.sh
           dest: /etc/init.d/fancontrol.sh
     

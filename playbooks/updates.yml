@@ -1,0 +1,26 @@
+---
+- name: Update systems
+  hosts:
+  - all
+  become: true
+
+  tasks:
+    - name: Remove useless packages from the cache
+      ansible.builtin.apt:
+        autoclean: yes
+
+    - name: Upgrade the OS (apt-get upgrade)
+      ansible.builtin.apt:
+        upgrade: full
+
+    - name: Remove dependencies that are no longer required
+      ansible.builtin.apt:
+        autoremove: yes
+
+    - name: Remove useless packages from the cache
+      ansible.builtin.apt:
+        autoclean: yes
+
+    - name: Remove dependencies that are no longer required
+      ansible.builtin.apt:
+        autoremove: yes
