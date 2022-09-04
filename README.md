@@ -78,7 +78,7 @@ su ansible
  sudo chmod 600 /home/ansible/.ssh/authorized_keys
  sudo chown ansible:ansible /home/ansible/.ssh -R
  echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
- sudo apt install python3-pip
+ sudo apt install python3-pip -y
  ```
 The user may be assumed locally by executing
 ```

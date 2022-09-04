@@ -1,0 +1,38 @@
+---
+- name: install picool
+  hosts:
+  - smitkub
+  become: true
+
+  tasks:
+    - name: Install python pip globally
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Copy fancontrol files
+      copy:
+        src: {{ items.src }}
+        dest: {{ items.dest }}
+        owner: root
+        group: root
+        mode: u=rwxr, g=xr, o=x
+      with_items:
+        - src: /git/picool/fancontrol.py
+          dest: /usr/loca/bin/fancontrol.py
+        - src: /git/picool/requirements.txt
+          dest: /home/ansible/picool/requirements.txt
+        - src: /git/picool/fancontrol.sh
+          dest: /etc/init.d/fancontrol.sh
+    
+    - name: install picool requirements
+      pip:
+        requirements: /home/ansible/picool/requirements.txt
+
+    - name: enabling the picool service
+      ansible.builtin.service:
+        name: "fancontrol.sh"
+        enabled: yes
+
+    - name: Unconditionally reboot the machine with all defaults
+      ansible.builtin.reboot:
