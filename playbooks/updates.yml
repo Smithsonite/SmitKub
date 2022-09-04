@@ -5,9 +5,10 @@
   become: true
 
   tasks:
-    - name: Remove useless packages from the cache
+    - name: Update all packages to their latest version
       ansible.builtin.apt:
-        autoclean: yes
+        name: "*"
+        state: latest
 
     - name: Upgrade the OS (apt-get upgrade)
       ansible.builtin.apt:

@@ -9,6 +9,7 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [**RPI Setup**](#rpi-setup)
     - [**Control system "Autobot"**](#control-system-autobot)
     - [**Worker Systems**](#worker-systems)
+  - [System maint Playbooks](#system-maint-playbooks)
 - [ScratchNotes](#scratchnotes)
 
 
@@ -86,6 +87,10 @@ sudo su
 su ansible
 ```
 
-
-
+## System maint Playbooks
+The following playbooks were created in order to handle the following  purposes
+* [gittest.yml](playbooks/gittest.yml) - This actually pulls the picool
+* [picool.yml](playbooks/picool.yml) - This is the fan software for the classic pi cases
+* [updates.yml](playbooks/updates.yml) - This performs apt updates and upgrades
 # ScratchNotes
+
