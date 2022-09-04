@@ -11,6 +11,14 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [**Worker Systems**](#worker-systems)
   - [System maint Playbooks](#system-maint-playbooks)
 - [ScratchNotes](#scratchnotes)
+  - [todo](#todo)
+    - [organization](#organization)
+      - [Understand Ansible Roles and galaxy better.](#understand-ansible-roles-and-galaxy-better)
+        - [roles](#roles)
+        - [galaxy](#galaxy)
+      - [manage the inventory file](#manage-the-inventory-file)
+    - [manage secrets](#manage-secrets)
+      - [ansible vault](#ansible-vault)
 
 
 # **Whats it for**
@@ -93,4 +101,38 @@ The following playbooks were created in order to handle the following  purposes
 * [picool.yml](playbooks/picool.yml) - This is the fan software for the classic pi cases
 * [updates.yml](playbooks/updates.yml) - This performs apt updates and upgrades
 # ScratchNotes
+## todo
+Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-actions based schedule)
 
+### organization
+In the same way i handled the primary pipeline and child piplines... you can use the import_tasks to bring it other files containing tasks.
+
+
+
+#### Understand Ansible Roles and galaxy better.
+##### roles
+make a roles folder
+make a folder named for the role
+2 things are required
+a meta directory
+a tasks folder
+
+roles are automatically picked up from the global roles folder /etc/ansible/roles.
+they are also automatically picked up if there is a roles folder in  the DIR your exeucting from
+youc an also configure the ansible.cfg file to point to a roles dir.
+
+##### galaxy
+The ansible-galaxy role init  will create a "scaffold" of a proper role
+```
+ansible-galaxy role init test
+```
+
+
+
+#### manage the inventory file
+
+### manage secrets
+#### ansible vault
+ansible vault allows you to encrypt fiels and store them in source control
+i am not a fan  of that.
+it alos seems to need a password to access it. 
