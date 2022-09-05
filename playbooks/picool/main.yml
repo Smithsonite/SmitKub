@@ -1,0 +1,8 @@
+---
+- name: install picool
+  hosts:
+  - picool
+  become: true
+
+  roles:
+    - csmithson12345.picool

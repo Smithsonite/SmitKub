@@ -1,9 +1,0 @@
----
-- hosts: localhost
-
-  tasks:
-  - name: "Check out a Git repository on the Ansible host"
-    local_action: 
-      module: git
-      repo: https://github.com/Smithsonite/picool.git
-      dest: /git/picool
