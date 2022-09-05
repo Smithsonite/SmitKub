@@ -121,6 +121,11 @@ roles are automatically picked up from the global roles folder /etc/ansible/role
 they are also automatically picked up if there is a roles folder in  the DIR your exeucting from
 youc an also configure the ansible.cfg file to point to a roles dir.
 
+typically good practice to make an ansible.cfg file in your project directory
+inside of that you will want to specify a roles path *(usually ./roles)
+that way conflicting versions of a role will not overwrite eachother.
+
+
 ##### galaxy
 The ansible-galaxy role init  will create a "scaffold" of a proper role
 ```
