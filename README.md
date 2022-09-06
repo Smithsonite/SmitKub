@@ -12,6 +12,7 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [System maint Playbooks](#system-maint-playbooks)
 - [ScratchNotes](#scratchnotes)
   - [todo](#todo)
+    - [Cron job](#cron-job)
     - [organization](#organization)
       - [Understand Ansible Roles and galaxy better.](#understand-ansible-roles-and-galaxy-better)
         - [roles](#roles)
@@ -103,6 +104,23 @@ The following playbooks were created in order to handle the following  purposes
 # ScratchNotes
 ## todo
 Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-actions based schedule)
+
+### Cron job
+while some cron jobs will apparently leverage another user... using crontab -e dosent actually seem to do so... nor does it seem to obey any path or home modification.
+what i was able to do was execute a command as the ansible user leveraging su. it STILL does not leverage the path that the ansible user has... so
+
+* you need to navigate to the ansible dir for the specific playbook because you cannot pump the ansible.cfg in any other way
+* you need to use the FULL path to ansible-playbook in order to invoke it
+
+as sudo 
+```
+crontab -e
+```
+
+```
+*/5 * * * * su ansible -c "cd /home/ansible/git/SmitKub/playbooks/updates && /home/ansible/.local/bin/ansible-playbook updates.yml"
+```
+
 
 ### organization
 In the same way i handled the primary pipeline and child piplines... you can use the import_tasks to bring it other files containing tasks.
