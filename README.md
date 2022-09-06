@@ -118,7 +118,7 @@ crontab -e
 ```
 
 ```
-*/5 * * * * su ansible -c "cd /home/ansible/git/SmitKub/playbooks/updates && /home/ansible/.local/bin/ansible-playbook updates.yml"
+5 1 * * * su ansible -c "cd /home/ansible/git/SmitKub/playbooks/updates && /home/ansible/.local/bin/ansible-playbook updates.yml"
 ```
 
 

@@ -1,0 +1,8 @@
+---
+- name: Update systems
+  hosts:
+  - apt
+  become: true
+
+  roles:
+    - csmithson12345.aptupdate
