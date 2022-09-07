@@ -98,9 +98,10 @@ su ansible
 
 ## System maint Playbooks
 The following playbooks were created in order to handle the following  purposes
-* [gittest.yml](playbooks/gittest.yml) - This actually pulls the picool
-* [picool.yml](playbooks/picool.yml) - This is the fan software for the classic pi cases
-* [updates.yml](playbooks/updates.yml) - This performs apt updates and upgrades
+* [picool](playbooks/picool/main.yml) - This is the fan software for the classic pi cases
+  * This has a dependency of the [picool](https://galaxy.ansible.com/csmithson12345/picool) ansible role
+* [updates](playbooks/updates/main.yml) - This performs apt updates and upgrades
+  * This has a dependency of the [apupdate](https://galaxy.ansible.com/csmithson12345/aptupdate) ansible role
 # ScratchNotes
 ## todo
 Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-actions based schedule)
