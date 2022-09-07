@@ -13,6 +13,7 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [**Cron job**](#cron-job)
 - [ScratchNotes](#scratchnotes)
   - [todo](#todo)
+  - [kubernetes installation methods](#kubernetes-installation-methods)
     - [organization](#organization)
       - [Understand Ansible Roles and galaxy better.](#understand-ansible-roles-and-galaxy-better)
         - [roles](#roles)
@@ -124,6 +125,14 @@ crontab -e
 ## todo
 Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-actions based schedule)
 
+## kubernetes installation methods
+
+
+* [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
+* [kubespray](https://kubernetes.io/docs/setup/production-environment/tools/kubespray/)
+* [kubespray/equinix metal](https://kubespray.io/#/docs/equinix-metal)
+  
+  leaning towards kubeadm as its the "supported" release.
 
 
 ### organization
@@ -176,4 +185,29 @@ install a specific version
 sudo apt install package=version -V
 ```
 sudo apt install vault=1.11.2-1 -V
+
+
+this seems to work with the sample playbook below. running additonal apt updates and upgrades did not upgrade vault.
+```
+---
+- name: apt lock testing
+  hosts:
+  - smitkub1.smithsonite.home
+  become: true
+
+  tasks:
+  - name: Run the equivalent of "apt-get update" as a separate step
+    ansible.builtin.apt:
+      update_cache: yes
+
+  - name: install hashicorp vault
+    ansible.builtin.apt:
+      name: vault=1.11.2-1
+      state: present
+
+  - name: Prevent vault from being upgraded
+    ansible.builtin.dpkg_selections:
+      name: vault
+      selection: hold
+```
 
