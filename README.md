@@ -9,10 +9,10 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [**RPI Setup**](#rpi-setup)
     - [**Control system "Autobot"**](#control-system-autobot)
     - [**Worker Systems**](#worker-systems)
-  - [System maint Playbooks](#system-maint-playbooks)
+  - [**System maint Playbooks**](#system-maint-playbooks)
+    - [**Cron job**](#cron-job)
 - [ScratchNotes](#scratchnotes)
   - [todo](#todo)
-    - [Cron job](#cron-job)
     - [organization](#organization)
       - [Understand Ansible Roles and galaxy better.](#understand-ansible-roles-and-galaxy-better)
         - [roles](#roles)
@@ -96,17 +96,14 @@ sudo su
 su ansible
 ```
 
-## System maint Playbooks
+## **System maint Playbooks**
 The following playbooks were created in order to handle the following  purposes
 * [picool](playbooks/picool/main.yml) - This is the fan software for the classic pi cases
   * This has a dependency of the [picool](https://galaxy.ansible.com/csmithson12345/picool) ansible role
 * [updates](playbooks/updates/main.yml) - This performs apt updates and upgrades
   * This has a dependency of the [apupdate](https://galaxy.ansible.com/csmithson12345/aptupdate) ansible role
-# ScratchNotes
-## todo
-Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-actions based schedule)
 
-### Cron job
+### **Cron job**
 while some cron jobs will apparently leverage another user... using crontab -e dosent actually seem to do so... nor does it seem to obey any path or home modification.
 what i was able to do was execute a command as the ansible user leveraging su. it STILL does not leverage the path that the ansible user has... so
 
@@ -119,8 +116,14 @@ crontab -e
 ```
 
 ```
-5 1 * * * su ansible -c "cd /home/ansible/git/SmitKub/playbooks/updates && /home/ansible/.local/bin/ansible-playbook updates.yml"
+5 1 * * * su ansible -c "cd /home/ansible/git/SmitKub/playbooks/updates && /home/ansible/.local/bin/ansible-playbook main.yml"
 ```
+
+
+# ScratchNotes
+## todo
+Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-actions based schedule)
+
 
 
 ### organization
@@ -160,3 +163,17 @@ ansible-galaxy role init test
 ansible vault allows you to encrypt fiels and store them in source control
 i am not a fan  of that.
 it alos seems to need a password to access it. 
+
+hold back a specific apt package with apt hold
+https://docs.ansible.com/ansible/latest/collections/ansible/builtin/dpkg_selections_module.html
+
+find avaliable versions
+```
+apt-cache showpkg <package-name>
+```
+install a specific version
+```
+sudo apt install package=version -V
+```
+sudo apt install vault=1.11.2-1 -V
+
