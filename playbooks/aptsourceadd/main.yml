@@ -7,16 +7,16 @@
   tasks:
   - name: One way to avoid apt_key once it is removed from your distro
     block:
-      - name: somerepo |no apt key
-        ansible.builtin.get_url:
-          url: https://apt.releases.hashicorp.com/gpg
-          dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    - name: somerepo |no apt key
+      ansible.builtin.get_url:
+        url: https://apt.releases.hashicorp.com/gpg
+        dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
 
-      - name: somerepo | apt source
-        ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
-        filename: hashicorp.list
-        state: present
+    - name: somerepo | apt source
+      ansible.builtin.apt_repository:
+      repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+      filename: hashicorp.list
+      state: present
 
   - name: Run the equivalent of "apt-get update" as a separate step
     ansible.builtin.apt:
