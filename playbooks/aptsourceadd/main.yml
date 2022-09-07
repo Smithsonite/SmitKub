@@ -13,9 +13,14 @@
           url: https://apt.releases.hashicorp.com/gpg
           dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
 
+      - name: Import a key from a file
+        ansible.builtin.rpm_key:
+          state: present
+          key: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
       - name: hashicorp vault | apt source
         ansible.builtin.apt_repository:
-          repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+          repo: "deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
           filename: hashicorp.list
           state: present
 
