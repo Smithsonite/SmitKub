@@ -16,7 +16,6 @@
       - name: hashicorp vault | apt source
         ansible.builtin.apt_repository:
         repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
-        filename: hashicorp.list
         state: present
 
   - name: Run the equivalent of "apt-get update" as a separate step
