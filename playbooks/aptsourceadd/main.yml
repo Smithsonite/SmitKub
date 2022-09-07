@@ -5,24 +5,15 @@
   become: true
 
   tasks:
-  - name: One way to avoid apt_key once it is removed from your distro
-    block:
 
-      - name: hashicorp vault |no apt key
-        ansible.builtin.get_url:
-          url: https://apt.releases.hashicorp.com/gpg
-          dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  - name: pull hachicorp key
+    ansible.builtin.command: wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 
-      - name: Import a key from a file
-        ansible.builtin.rpm_key:
-          state: present
-          key: /usr/share/keyrings/hashicorp-archive-keyring.gpg
-
-      - name: hashicorp vault | apt source
-        ansible.builtin.apt_repository:
-          repo: "deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
-          filename: hashicorp.list
-          state: present
+  - name: hashicorp vault | apt source
+    ansible.builtin.apt_repository:
+      repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+      filename: hashicorp.list
+      state: present
 
   - name: Run the equivalent of "apt-get update" as a separate step
     ansible.builtin.apt:
