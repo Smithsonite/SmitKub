@@ -211,3 +211,20 @@ this seems to work with the sample playbook below. running additonal apt updates
       selection: hold
 ```
 
+Currently on pre-flight
+
+https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/
+
+```
+[init] Using Kubernetes version: v1.24.0
+[preflight] Running pre-flight checks
+        [WARNING SystemVerification]: missing optional cgroups: blkio
+error execution phase preflight: [preflight] Some fatal errors occurred:
+        [ERROR CRI]: container runtime is not running: output: time="2022-09-07T21:18:17-04:00" level=fatal msg="unable to determine runtime API version: rpc error: code = Unavailable desc = connection error: desc = \"transport: Error while dialing dial unix /var/run/containerd/containerd.sock: connect: no such file or directory\""
+, error: exit status 1
+        [ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables does not exist
+        [ERROR FileContent--proc-sys-net-ipv4-ip_forward]: /proc/sys/net/ipv4/ip_forward contents are not set to 1
+        [ERROR KubeletVersion]: the kubelet version is higher than the control plane version. This is not a supported version skew and may lead to a malfunctional cluster. Kubelet version: "1.25.0" Control plane version: "1.24.0"
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+To see the stack trace of this error execute with --v=5 or higher
+```
