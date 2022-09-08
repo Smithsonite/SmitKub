@@ -1,0 +1,8 @@
+---
+- name: Install Kubadm
+  hosts:
+  - localhost
+  become: true
+
+  roles:
+    - csmithson12345.kubcontroller
