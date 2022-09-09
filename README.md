@@ -245,3 +245,7 @@ kubectl version
 kubeadm version
 * 1.25.0
 
+
+ended the day here
+https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd-systemd
+
