@@ -228,3 +228,20 @@ error execution phase preflight: [preflight] Some fatal errors occurred:
 [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
 To see the stack trace of this error execute with --v=5 or higher
 ```
+
+
+kubelet versions 
+* 1.25.0-00
+* 1.24.4-00
+* 1.24.3-00
+* 1.24.2-00
+
+kubectl version
+* 1.25.0-00
+* 1.24.4-00
+* 1.24.3-00
+* 1.24.2-00
+
+kubeadm version
+* 1.25.0
+
