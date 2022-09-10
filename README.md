@@ -21,6 +21,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [manage the inventory file](#manage-the-inventory-file)
     - [manage secrets](#manage-secrets)
       - [ansible vault](#ansible-vault)
+- [Victory](#victory)
 
 
 # **Whats it for**
@@ -251,3 +252,6 @@ https://kubernetes.io/docs/setup/production-environment/container-runtimes/#cont
 
 resource?
 https://computingforgeeks.com/install-kubernetes-cluster-ubuntu-jammy/
+
+# Victory
+![Screenshot](Docs/pics/victory.png)
