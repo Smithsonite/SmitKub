@@ -344,3 +344,4 @@ install flannel
 kubectl apply -f kube-flannel.yml
 ```
 
+Going to look into a kubernetes class on puralsight now.
