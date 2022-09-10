@@ -249,3 +249,5 @@ kubeadm version
 ended the day here
 https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd-systemd
 
+resource?
+https://computingforgeeks.com/install-kubernetes-cluster-ubuntu-jammy/
