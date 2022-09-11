@@ -22,6 +22,13 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [manage secrets](#manage-secrets)
       - [ansible vault](#ansible-vault)
 - [Victory](#victory)
+- [kubernetes installation and configuration](#kubernetes-installation-and-configuration)
+  - [insallation methods](#insallation-methods)
+  - [networking](#networking)
+    - [ports](#ports)
+  - [scalability](#scalability)
+  - [high availability](#high-availability)
+  - [Disaster Recovery](#disaster-recovery)
 
 
 # **Whats it for**
@@ -345,3 +352,65 @@ kubectl apply -f kube-flannel.yml
 ```
 
 Going to look into a kubernetes class on puralsight now.
+
+# kubernetes installation and configuration
+
+[class link](https://app.pluralsight.com/courses/9f2f79a1-8408-4c5a-8060-e424161dc54e/table-of-contents)
+
+## insallation methods
+standard is kubeadm
+
+[Kubernetes](https://github.com/kubernetes/kubernetes) is maintained on github 
+
+distro repo's is the prefered method for me, and the instructer
+
+### Building the cluster
+* install and configure packages
+* create the cluster
+* Configure Pod Networking
+* Join Nodes to cluster
+
+#### software packages
+* containerd
+* kubelet
+* kubeadm
+* kubectl
+
+sequence of commands
+(required on all nodes, both ctr plane and workers)
+install container d
+add kubernetes pg key
+add kubelet, kubeadm kubectl  
+mark those packages with HOLD
+
+
+
+
+## networking
+
+### ports
+
+control plane
+| Component | Ports | Used By |
+| --- | --- | --- | 
+| api | 6443 | All
+| etcd | 2379-2380 | API/etcd |
+| Scheduler | 10251 | Self |
+| Controler manager | 10252 | Self |
+| Kubelet | 10250 | Control Plane |
+
+Worker nodes
+| Component | Ports | Used By |
+| --- | --- | --- | 
+| Kubelet | 10250 | Control Plane |
+| NodePort | 30000-32767 | All | 
+
+
+#
+
+## scalability
+
+## high availability
+
+## Disaster Recovery
+

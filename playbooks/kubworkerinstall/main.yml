@@ -1,0 +1,8 @@
+---
+- name: Install Kubadm
+  hosts:
+  - smitkub
+  become: true
+
+  roles:
+    - csmithson12345.kubworker
