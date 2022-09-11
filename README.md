@@ -48,7 +48,8 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [demo](#demo)
     - [application deployments INTO the cluster](#application-deployments-into-the-cluster)
       - [declaritive](#declaritive)
-        - [our manifest](#our-manifest)
+        - [our manifest (manual review)](#our-manifest-manual-review)
+        - [generating a manifest with a dry run (automatic and great)](#generating-a-manifest-with-a-dry-run-automatic-and-great)
 
 
 # **Whats it for**
@@ -659,7 +660,7 @@ CLI isnt sustainable
 define our desired state in code
 manifest
 
-##### our manifest
+##### our manifest (manual review)
 ```
 apiVersion: apps/v1
 kind: Deployment
@@ -682,3 +683,8 @@ spec:
 ```
 
 kubectl apply -f deployment.yaml
+
+##### generating a manifest with a dry run (automatic and great)
+```
+kubectl create deployment hello-world --image=gcr.io/google-samples/hello-app:1.0 --dry-run=client -o yaml > deployment.yaml
+```
