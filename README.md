@@ -775,3 +775,8 @@ kubectl expose deployment nginx --port=80 --target-port=80 --dry-run=client -o y
 kubectl apply -f serice.yaml
 ```
 
+to update an  application,  update the manifest and then re-apply with kubectl
+
+```
+kubectl apply -f deployment.yaml
+```
