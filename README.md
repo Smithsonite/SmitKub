@@ -50,6 +50,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [declaritive](#declaritive)
         - [our manifest (manual review)](#our-manifest-manual-review)
         - [generating a manifest with a dry run (automatic and great)](#generating-a-manifest-with-a-dry-run-automatic-and-great)
+        - [expose application](#expose-application)
 
 
 # **Whats it for**
@@ -688,3 +689,74 @@ kubectl apply -f deployment.yaml
 ```
 kubectl create deployment hello-world --image=gcr.io/google-samples/hello-app:1.0 --dry-run=client -o yaml > deployment.yaml
 ```
+
+NOTE!!! Found that the super basic hello-world samples do NOT support ARM processors :0p. switched to good ole nginx.
+
+To list out the running containers on any cluster member.
+
+```
+sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock ps
+```
+
+attaching a shell to a pod
+
+```
+kubectl exec -it hello-world-pod -- /bin/bash
+```
+
+
+##### expose application
+
+```
+kubectl expose deployment nginx-6d666844f6-rrjjn --port=80 --target-port=80
+```
+
+```
+ansible@autobot:~/git/SmitKub/appdeploy$ kubectl describe service nginx
+Name:              nginx
+Namespace:         default
+Labels:            app=nginx
+Annotations:       <none>
+Selector:          app=nginx
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.99.122.48
+IPs:               10.99.122.48
+Port:              <unset>  80/TCP
+TargetPort:        80/TCP
+Endpoints:         192.168.4.2:80
+Session Affinity:  None
+Events:            <none>
+```
+
+```
+ansible@autobot:~/git/SmitKub/appdeploy$ curl http://10.99.122.48:80
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+
+##### declaritive deployment
+kubectl create deployment nginx --image=nginx --dry-run=client -o yaml | more

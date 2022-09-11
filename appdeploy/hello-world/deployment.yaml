@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: hello-world
-  name: hello-world
+    app: nginx
+  name: nginx
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello-world
+      app: nginx
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: hello-world
+        app: nginx
     spec:
       containers:
-      - image: gcr.io/google-samples/hello-app:1.0
-        name: hello-app
+      - image: nginx
+        name: nginx
         resources: {}
 status: {}
