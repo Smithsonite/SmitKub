@@ -24,6 +24,14 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [Victory](#victory)
 - [kubernetes installation and configuration](#kubernetes-installation-and-configuration)
   - [insallation methods](#insallation-methods)
+    - [Building the cluster](#building-the-cluster)
+      - [software packages](#software-packages)
+      - [bootstraping](#bootstraping)
+        - [CA](#ca)
+        - [kubeadm created kubeconfig files](#kubeadm-created-kubeconfig-files)
+        - [staic pod manifests](#staic-pod-manifests)
+        - [Createing a control plane node](#createing-a-control-plane-node)
+        - [adding a node to a cluster](#adding-a-node-to-a-cluster)
   - [networking](#networking)
     - [ports](#ports)
   - [scalability](#scalability)
@@ -382,11 +390,103 @@ install container d
 add kubernetes pg key
 add kubelet, kubeadm kubectl  
 mark those packages with HOLD
+(all handled by the ansible runbook)
 
+#### bootstraping
+kubeadm
 
+```
+kubeadm init
+```
+* This performs pre-flight checks
+* creates a CA
+* Generate Kubeconfig files
+* Generating static pod manifests
+* wait for control plane pods
+* tains the control plane node - keeps pods from running on the control plane node
+* generates a bootdstrap token
+* starts and add-on components/pods.
 
+##### CA
+self-signed CAA
+it CAN be a part of an external PKI
+this secures cluster communications
+  api server
+authentication of users and cluster components
+the files live in /etc/kubernetes/pki
+
+##### kubeadm created kubeconfig files
+
+used to define how to connect tot he cluster
+client certs
+cluster api server network location
+
+/etc/kubernetes
+* admin.conf (the admin account/certificate)
+* all of the below are used to authenticate to the cluster for their specific needs
+  * kubelet.cof 
+  * controller-manager.conf 
+  * scheduler.conf 
+
+##### staic pod manifests
+manifests describe the configuraiton of things (typically pods)
+/etc/kubernetes/manifests
+* etcd
+* api server
+* controller manager
+* scheduler
+the  kubelet watches this directory and any changes invoke actions.
+
+##### Createing a control plane node
+download a yaml manifest of our network.
+
+```
+wget https://docs.projectcalico.org/manifests/calico.yaml
+```
+
+[calico](https://docs.projectcalico.org/manifests/calico.yaml)
+
+kubeadm
+```
+kubeadm config print init-defaults | tee ClusterConfiguration.yaml
+```
+
+```
+sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
+```
+
+```
+mkdir -p $HOME/.kube
+sudo cp - i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+```
+kubectl apply -f calico.yaml
+```
+
+##### adding a node to a cluster
+* install packages
+* kubeadm join -- network locaiton --bootstrap token -- certhash
+* download cluster information
+* node submits a CSR
+* CA signs the CSR automatically
+* Configures kubelet.conf
+
+```
+kubeadm join (ip address : port) --token (token) --discovery-token-ca-cert-hash (hash)
+```
 
 ## networking
+overlay networks (software defined networking)
+* flannel -layer 3 virtual network
+* alico - L3 and policy based traffic management
+* weave net - multi-host network
+
+we will use calico in  this example
+
+
+
 
 ### ports
 
