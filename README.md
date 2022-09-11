@@ -32,6 +32,7 @@ To document and deploy an ansible backed Kubernetes cluster.
         - [staic pod manifests](#staic-pod-manifests)
         - [Createing a control plane node](#createing-a-control-plane-node)
         - [adding a node to a cluster](#adding-a-node-to-a-cluster)
+        - [initialize control plane results](#initialize-control-plane-results)
   - [networking](#networking)
     - [ports](#ports)
   - [scalability](#scalability)
@@ -475,6 +476,36 @@ kubectl apply -f calico.yaml
 
 ```
 kubeadm join (ip address : port) --token (token) --discovery-token-ca-cert-hash (hash)
+```
+
+##### initialize control plane results
+```
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.1.230:6443 --token abcdef.0123456789abcdef \
+        --discovery-token-ca-cert-hash sha256:eafc5fe6462d3e29e0c13ce0df5f1d38bb8d31dcdf10b0803275289181b6f179
+```
+
+apply calico config
+
+```
+kubectl apply -f calico.yaml
 ```
 
 ## networking
