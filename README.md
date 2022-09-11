@@ -51,6 +51,7 @@ To document and deploy an ansible backed Kubernetes cluster.
         - [our manifest (manual review)](#our-manifest-manual-review)
         - [generating a manifest with a dry run (automatic and great)](#generating-a-manifest-with-a-dry-run-automatic-and-great)
         - [expose application](#expose-application)
+        - [declaritive deployment](#declaritive-deployment)
 
 
 # **Whats it for**
@@ -759,4 +760,18 @@ Commercial support is available at
 
 
 ##### declaritive deployment
+applicaiton
+```
 kubectl create deployment nginx --image=nginx --dry-run=client -o yaml | more
+```
+
+service
+
+```
+kubectl expose deployment nginx --port=80 --target-port=80 --dry-run=client -o yaml > service.yaml
+```
+
+```
+kubectl apply -f serice.yaml
+```
+
