@@ -14,7 +14,7 @@ localAPIEndpoint:
 nodeRegistration:
   criSocket: unix:///var/run/containerd/containerd.sock
   imagePullPolicy: IfNotPresent
-  name: node
+  name: autobot
   taints: null
 ---
 apiServer:
