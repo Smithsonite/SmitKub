@@ -41,7 +41,14 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [Disaster Recovery](#disaster-recovery)
   - [Working with the Kubernetes cluster](#working-with-the-kubernetes-cluster)
     - [using kubectl to interact with the cluster](#using-kubectl-to-interact-with-the-cluster)
+      - [opperations](#opperations)
+      - [resources](#resources)
+      - [output](#output)
+      - [kubectl](#kubectl)
+      - [demo](#demo)
     - [application deployments INTO the cluster](#application-deployments-into-the-cluster)
+      - [declaritive](#declaritive)
+        - [our manifest](#our-manifest)
 
 
 # **Whats it for**
@@ -586,14 +593,92 @@ Worker nodes
 
 ### using kubectl to interact with the cluster
 
+#### opperations
 kubectl - primary tool
 * operations
   * apply/create - creates a resource
   * run - start a pod from an image (ad hoc)
   * explain - documentation for the resource
+  * delete - deletes a resource
+  * get - list resources
+  * describe - deteiled resource information
+  * exec - execute a command on a container (like docker exec)
+  * logs - view logs on a container - valueable troubleshooting
+
+#### resources
+
 * resources
+  * nodes (no)
+  * pods (po)
+  * services (svc)
+
+#### output
 * output
+  * format
+    * wide - output additional info
+    * yaml - YAML formatted API object
+    * json - JSON formatted API object
+    * dry-run - print an objecct without sending it to the API server (skelliton)
 * 
+
+#### kubectl
+
+```
+kubectl [command] [type] [name] [flags]
+
+kubectl get pods pod1 --output=yaml
+kubectl create deployment nginx --image=nginx
+```
+
+configure autocomplete
+```
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+source ~/.bashrc
+```
+
+#### demo
+
 
 
 ### application deployments INTO the cluster
+
+####imperative configuration
+
+this is one object at a time...
+```
+kubectl create deployment nginx --image=nginx
+```
+
+```
+kubectl run nginx --image=nginx
+```
+
+CLI isnt sustainable
+
+#### declaritive
+define our desired state in code
+manifest
+
+##### our manifest
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+        - image: gcr.io/google-samples/hello-app:1.0
+          name: hello-app
+
+```
+
+kubectl apply -f deployment.yaml
