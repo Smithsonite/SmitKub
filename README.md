@@ -33,11 +33,15 @@ To document and deploy an ansible backed Kubernetes cluster.
         - [Createing a control plane node](#createing-a-control-plane-node)
         - [adding a node to a cluster](#adding-a-node-to-a-cluster)
         - [initialize control plane results](#initialize-control-plane-results)
+        - [add node to cluster](#add-node-to-cluster)
   - [networking](#networking)
     - [ports](#ports)
   - [scalability](#scalability)
   - [high availability](#high-availability)
   - [Disaster Recovery](#disaster-recovery)
+  - [Working with the Kubernetes cluster](#working-with-the-kubernetes-cluster)
+    - [using kubectl to interact with the cluster](#using-kubectl-to-interact-with-the-cluster)
+    - [application deployments INTO the cluster](#application-deployments-into-the-cluster)
 
 
 # **Whats it for**
@@ -508,6 +512,39 @@ apply calico config
 kubectl apply -f calico.yaml
 ```
 
+##### add node to cluster
+* make sure it passes the ansible playbook
+* obtain token
+```
+kubeadm tokenlist
+
+TOKEN                     TTL         EXPIRES                USAGES                   DESCRIPTION                                                EXTRA GROUPS
+abcdef.0123456789abcdef   23h         2022-09-12T19:13:27Z   authentication,signing   <none>                                                     system:bootstrappers:kubeadm:default-node-token
+
+```
+This token only lasts 24 hrs.
+a new one can be generated with  
+
+```
+kubead token  create
+```
+
+Next we need the cert hash
+
+```
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+
+eafc5fe6462d3e29e0c13ce0df5f1d38bb8d31dcdf10b0803275289181b6f179
+```
+
+.... good lord.. or we can  just use this damn command do do all of that for us
+
+```
+kubeadm token create --print-join-command
+```
+execute teh command prefixed with "sudo" and profit....
+
+
 ## networking
 overlay networks (software defined networking)
 * flannel -layer 3 virtual network
@@ -545,3 +582,18 @@ Worker nodes
 
 ## Disaster Recovery
 
+## Working with the Kubernetes cluster
+
+### using kubectl to interact with the cluster
+
+kubectl - primary tool
+* operations
+  * apply/create - creates a resource
+  * run - start a pod from an image (ad hoc)
+  * explain - documentation for the resource
+* resources
+* output
+* 
+
+
+### application deployments INTO the cluster
