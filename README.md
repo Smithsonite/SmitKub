@@ -63,19 +63,6 @@ This cluster is designed around haveing 4 raspberry pi 4b 8gb units. One control
 # **Home Network Setup**
 The nodes have DHCP reservations for the "smithsonite.home" network. Their information is as follows
 
-<style>
-table {
-    border-collapse: collapse;
-}
-table, th, td {
-   border: 1px solid black;
-}
-blockquote {
-    border-left: solid blue;
-	padding-left: 10px;
-}
-</style>
-
 
 | Name | Mac | IP |
 | :---: | :---: | :---: |
