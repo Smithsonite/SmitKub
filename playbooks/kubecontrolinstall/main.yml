@@ -1,7 +1,7 @@
 ---
 - name: Install KubeCluster
   hosts:
-  - smitkub
+  - automationhost
   become: true
 
   roles:
