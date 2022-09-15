@@ -97,7 +97,7 @@ Additional users will be configured as needed. The first user should be "ansible
  ```
  sudo useradd -d /home/ansible -m -s/bin/bash ansible
  sudo mkdir /home/ansible/.ssh
-At this time, copy the id_rsa and id_rsa.pub files from keeper into the /home/ansible/.ssh directory.
+ # At this time, copy the id_rsa and id_rsa.pub files from keeper into the /home/ansible/.ssh directory.
  sudo chmod 600 /home/ansible/.ssh/id_rsa
  sudo chmod 644 /home/ansible/.ssh/id_rsa.pub
  sudo chown ansible:ansible /home/ansible/.ssh -R
