@@ -1,7 +1,7 @@
 ---
 - name: Install KubeCluster
   hosts:
-  - automationhost
+  - localhost
   become: true
 
   roles:
