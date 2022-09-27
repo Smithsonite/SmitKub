@@ -52,6 +52,9 @@ To document and deploy an ansible backed Kubernetes cluster.
         - [generating a manifest with a dry run (automatic and great)](#generating-a-manifest-with-a-dry-run-automatic-and-great)
         - [expose application](#expose-application)
         - [declaritive deployment](#declaritive-deployment)
+- [9-26-2022](#9-26-2022)
+- [successfull exposure](#successfull-exposure)
+  - [confirmed](#confirmed)
 
 
 # **Whats it for**
@@ -759,7 +762,7 @@ kubectl expose deployment nginx --port=80 --target-port=80 --dry-run=client -o y
 ```
 
 ```
-kubectl apply -f serice.yaml
+kubectl apply -f service.yaml
 ```
 
 to update an  application,  update the manifest and then re-apply with kubectl
@@ -767,3 +770,57 @@ to update an  application,  update the manifest and then re-apply with kubectl
 ```
 kubectl apply -f deployment.yaml
 ```
+
+
+# 9-26-2022
+pickingup
+navigated to /git/SmitKube/appdeploy/hello-world
+
+had to 
+```
+kubectl create deployment nginx --image=nginx
+
+kubectl expose deployment nginx --port=80 --target-port=80 --dry-run=client -o yaml > service.yaml
+
+kubectl apply -f service.yaml
+```
+
+how do we expose the app on the routeable network.
+```
+kubectl expose deployment nginx --port=80 --target-port=80 --type=NodePort --dry-run=client -o yaml > service.yaml
+```
+# successfull exposure
+ooookaaay...
+per this [helpful article](https://medium.com/swlh/kubernetes-external-ip-service-type-5e5e9ad62fcd) The app is successfully exposed by leveraging the control node's ip address in the configuration. I suspect that if i configure a service such as keepalived on multiple control nodes, the issue of "HA" would be resolved.
+in the meantime i am going to try and provision some specific IP addrsses on the control node and see if i can get nginx to follow it.
+
+```
+ansible@autobot:~/git/SmitKub/appdeploy/hello-world$ cat service.yaml 
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  externalIPs:
+    - 192.168.1.230
+status:
+  loadBalancer: {}
+```
+
+```
+Current DNS Server: 192.168.1.231
+       DNS Servers: 192.168.1.231 192.168.1.1
+        DNS Domain: smithsonite.home
+```
+
+## confirmed
+Confirmed working when a specific ip address (192.168.1.235) was assigned to the control node

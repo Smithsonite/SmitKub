@@ -12,5 +12,7 @@ spec:
     targetPort: 80
   selector:
     app: nginx
+  externalIPs:
+    - 192.168.1.235
 status:
   loadBalancer: {}
