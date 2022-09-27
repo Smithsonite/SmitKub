@@ -55,6 +55,8 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [9-26-2022](#9-26-2022)
 - [successfull exposure](#successfull-exposure)
   - [confirmed](#confirmed)
+    - [netplan config](#netplan-config)
+  - [cleanup](#cleanup)
 
 
 # **Whats it for**
@@ -824,3 +826,43 @@ Current DNS Server: 192.168.1.231
 
 ## confirmed
 Confirmed working when a specific ip address (192.168.1.235) was assigned to the control node
+
+### netplan config
+
+```
+ansible@autobot:~/git/SmitKub/appdeploy/hello-world$ cat /etc/netplan/50-cloud-init.yaml
+# This file is generated from information provided by the datasource.  Changes
+# to it will not persist across an instance reboot.  To disable cloud-init's
+# network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+network:
+    version: 2
+    wifis:
+        renderer: networkd
+        wlan0:
+            access-points:
+                CampSmit:
+                    hidden: true
+                    password: this is a secret...
+            dhcp4: no
+            addresses: [192.168.1.230/24, 192.168.1.235/24]
+            routes:
+                - to: default
+                  via: 192.168.1.1
+            nameservers:
+              addresses: [192.168.1.231, 192.168.1.1]
+              search: [smithsonite.home]
+            optional: true
+```
+then use
+
+```
+sudo netplan apply
+```
+
+## cleanup
+```
+kubectl delete service nginx
+kubectl delete deployment nginx
+```
