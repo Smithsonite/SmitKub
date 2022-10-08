@@ -57,6 +57,7 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [confirmed](#confirmed)
     - [netplan config](#netplan-config)
   - [cleanup](#cleanup)
+- [calico and external IP](#calico-and-external-ip)
 
 
 # **Whats it for**
@@ -369,6 +370,19 @@ kubectl apply -f kube-flannel.yml
 Going to look into a kubernetes class on puralsight now.
 
 # kubernetes installation and configuration
+
+## Quick reference to recreating the cluster
+```
+kubeadm config print init-defaults | tee ClusterConfiguration.yaml
+sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
+mkdir -p $HOME/.kube
+sudo cp - i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f calico.yaml
+```
+[ClusterConfiguration.yaml](bootstrap/ClusterConfiguration.yaml) and [calico.yaml](bootstrap/calico.yaml) can be found in the bootstrap directory.
+
+
 
 [class link](https://app.pluralsight.com/courses/9f2f79a1-8408-4c5a-8060-e424161dc54e/table-of-contents)
 
@@ -866,3 +880,17 @@ sudo netplan apply
 kubectl delete service nginx
 kubectl delete deployment nginx
 ```
+
+
+
+# calico and external IP
+https://projectcalico.docs.tigera.io/networking/advertise-service-ips
+
+ok.. so nodeport will require a unique ip/port combination for all services...
+
+INGRESS will allow us to use a reverse proxy.. such as NGINX.
+Ingress looks like what i want to setup
+
+it LOOKS like ingress services just get a public ip.
+
+so ingress deployment > service > application deployment.
