@@ -1,7 +1,11 @@
 # **SmitKub**
+# **Purpose**
 To document and deploy an ansible backed Kubernetes cluster. 
 
+# **ToC**
 - [**SmitKub**](#smitkub)
+- [**Purpose**](#purpose)
+- [**ToC**](#toc)
 - [**Whats it for**](#whats-it-for)
 - [**Components**](#components)
 - [**Home Network Setup**](#home-network-setup)
@@ -11,6 +15,8 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [**Worker Systems**](#worker-systems)
   - [**System maint Playbooks**](#system-maint-playbooks)
     - [**Cron job**](#cron-job)
+- [**Kubernetes Installation**](#kubernetes-installation)
+  - [**Node Prep**](#node-prep)
 - [ScratchNotes](#scratchnotes)
   - [todo](#todo)
   - [kubernetes installation methods](#kubernetes-installation-methods)
@@ -23,6 +29,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [ansible vault](#ansible-vault)
 - [Victory](#victory)
 - [kubernetes installation and configuration](#kubernetes-installation-and-configuration)
+  - [Quick reference to recreating the cluster](#quick-reference-to-recreating-the-cluster)
   - [insallation methods](#insallation-methods)
     - [Building the cluster](#building-the-cluster)
       - [software packages](#software-packages)
@@ -70,20 +77,20 @@ This cluster is designed around haveing 4 raspberry pi 4b 8gb units. One control
 The nodes have DHCP reservations for the "smithsonite.home" network. Their information is as follows
 
 
-| Name | Mac | IP |
-| :---: | :---: | :---: |
-| Autobot | E4:5F:01:B9:98:00 |192.168.1.230 |
-| smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 |
-| smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 |
-| smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 |
+| Name | Mac | Primary IP | Alternet IP |
+| :---: | :---: | :---: | :---: |
+| Autobot | E4:5F:01:B9:98:00 |192.168.1.230 | 192.168.2.235 |
+| smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | |
+| smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | |
+| smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | |
 
 # **Ansible Setup**
-The control pane is autobot.smithsonite.home. From this system we can control the other 3. 
-Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under ansible SSH in keeper). This keypair is to be uploaded to the RPI's for the ansible users.
+The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
+Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under "ansible SSH" in keeper). This keypair is to be uploaded to the RPI's for the ansible users.
 
 ## **RPI Setup**
 The pi's are configured with ubuntu 22.04 and with my own SSH keypair with the user csmithson and the campsmit network.
-Additional users will be configured as needed. The first user should be "ansible".
+Additional users will be configured as needed. The first user should be "ansible". Once this user is configured, additional configuration can be done via Ansible.
 
 ### **Control system "Autobot"**
 
@@ -143,6 +150,14 @@ crontab -e
 ```
 5 1 * * * su ansible -c "cd /home/ansible/git/SmitKub/playbooks/updates && /home/ansible/.local/bin/ansible-playbook main.yml"
 ```
+# **Kubernetes Installation**
+## **Node Prep**
+An ansible role has been created to deploy a consistent kubernetes installation for both worker and control nodes. The two playbooks for installation can be found in the playbooks directory
+* [kubworkerinstall](playbooks/kubworkerinstall/main.yml)
+* [kubeconrolinstall](playbooks/kubecontrolinstall/main.yml)
+
+This will install all of the required packages. As of now, this will leverage version 1.25.
+
 
 
 # ScratchNotes
