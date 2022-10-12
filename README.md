@@ -23,13 +23,13 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [**Building the cluster**](#building-the-cluster)
       - [**Software packages**](#software-packages)
       - [**Bootstraping**](#bootstraping)
-        - [**CA**](#ca)
-        - [kubeadm created kubeconfig files](#kubeadm-created-kubeconfig-files)
-        - [staic pod manifests](#staic-pod-manifests)
-        - [Createing a control plane node](#createing-a-control-plane-node)
-        - [adding a node to a cluster](#adding-a-node-to-a-cluster)
-        - [initialize control plane results](#initialize-control-plane-results)
-        - [add node to cluster](#add-node-to-cluster)
+        - [**kubeadm created kubeconfig files**](#kubeadm-created-kubeconfig-files)
+          - [**CA**](#ca)
+          - [**Staic pod manifests**](#staic-pod-manifests)
+      - [**Createing a control plane node**](#createing-a-control-plane-node)
+      - [**Adding a node to a cluster**](#adding-a-node-to-a-cluster)
+      - [**Initialize control plane results**](#initialize-control-plane-results)
+      - [**Add node to cluster**](#add-node-to-cluster)
   - [networking](#networking)
     - [ports](#ports)
   - [scalability](#scalability)
@@ -210,19 +210,11 @@ kubeadm init
 * generates a bootdstrap token
 * starts and add-on components/pods.
 
-##### **CA**
-The cluster procuces a self-signed CA
-it CAN be a part of an external PKI
-this secures cluster communications
-  api server
-authentication of users and cluster components
-the files live in /etc/kubernetes/pki
+##### **kubeadm created kubeconfig files**
 
-##### kubeadm created kubeconfig files
-
-used to define how to connect tot he cluster
-client certs
-cluster api server network location
+These files are used to define how to connect to the cluster and include 
+* client certs
+* cluster api server network location
 
 /etc/kubernetes
 * admin.conf (the admin account/certificate)
@@ -231,8 +223,12 @@ cluster api server network location
   * controller-manager.conf 
   * scheduler.conf 
 
-##### staic pod manifests
-manifests describe the configuraiton of things (typically pods)
+###### **CA**
+The cluster procuces a self-signed CA
+it CAN be a part of an external PKI, but typically its just a part of the cluster. This secures cluster communications, authentication of users and cluster components. The files live in /etc/kubernetes/pki
+
+###### **Staic pod manifests**
+Manifests describe the configuraiton of things (typically pods)
 /etc/kubernetes/manifests
 * etcd
 * api server
@@ -240,7 +236,7 @@ manifests describe the configuraiton of things (typically pods)
 * scheduler
 the  kubelet watches this directory and any changes invoke actions.
 
-##### Createing a control plane node
+#### **Createing a control plane node**
 download a yaml manifest of our network.
 
 ```
@@ -268,7 +264,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f calico.yaml
 ```
 
-##### adding a node to a cluster
+#### **Adding a node to a cluster**
 * install packages
 * kubeadm join -- network locaiton --bootstrap token -- certhash
 * download cluster information
@@ -280,7 +276,7 @@ kubectl apply -f calico.yaml
 kubeadm join (ip address : port) --token (token) --discovery-token-ca-cert-hash (hash)
 ```
 
-##### initialize control plane results
+#### **Initialize control plane results**
 ```
 Your Kubernetes control-plane has initialized successfully!
 
@@ -310,7 +306,7 @@ apply calico config
 kubectl apply -f calico.yaml
 ```
 
-##### add node to cluster
+#### **Add node to cluster**
 * make sure it passes the ansible playbook
 * obtain token
 ```
