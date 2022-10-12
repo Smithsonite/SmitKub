@@ -27,19 +27,14 @@ To document and deploy an ansible backed Kubernetes cluster.
           - [**CA**](#ca)
           - [**Staic pod manifests**](#staic-pod-manifests)
       - [**Createing a control plane node**](#createing-a-control-plane-node)
-      - [**Adding a node to a cluster**](#adding-a-node-to-a-cluster)
+      - [**Adding a node to a cluster steps**](#adding-a-node-to-a-cluster-steps)
       - [**Add node to cluster**](#add-node-to-cluster)
-  - [networking](#networking)
-    - [ports](#ports)
-  - [scalability](#scalability)
-  - [high availability](#high-availability)
-  - [Disaster Recovery](#disaster-recovery)
-  - [Working with the Kubernetes cluster](#working-with-the-kubernetes-cluster)
-    - [using kubectl to interact with the cluster](#using-kubectl-to-interact-with-the-cluster)
-      - [opperations](#opperations)
-      - [resources](#resources)
-      - [output](#output)
-      - [kubectl](#kubectl)
+  - [Networking](#networking)
+    - [**Ports**](#ports)
+  - [**Opperations**](#opperations)
+  - [**Resources**](#resources)
+  - [**Output**](#output)
+  - [**Kubectl**](#kubectl)
       - [demo](#demo)
     - [application deployments INTO the cluster](#application-deployments-into-the-cluster)
       - [declaritive](#declaritive)
@@ -79,7 +74,7 @@ The nodes have DHCP reservations for the "smithsonite.home" network. Their infor
 
 | Name | Mac | Primary IP | Alternet IP |
 | :---: | :---: | :---: | :---: |
-| Autobot | E4:5F:01:B9:98:00 |192.168.1.230 | 192.168.2.235 |
+| autobot | E4:5F:01:B9:98:00 |192.168.1.230 | 192.168.2.235 |
 | smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | |
 | smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | |
 | smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | |
@@ -244,6 +239,7 @@ wget https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
 [calico](https://docs.projectcalico.org/manifests/calico.yaml)
+
 The above configuration is modified to update the CIDR range for our cluster. this can be found [here](bootstrap/calico.yaml) under "CALICO_IPV4POOL_CIDR"
 
 
@@ -299,7 +295,7 @@ kubectl apply -f calico.yaml
 
 
 
-#### **Adding a node to a cluster**
+#### **Adding a node to a cluster steps**
 * install packages
 * kubeadm join -- network locaiton --bootstrap token -- certhash
 * download cluster information
@@ -321,6 +317,18 @@ kubectl apply -f calico.yaml
 #### **Add node to cluster**
 * make sure it passes the ansible playbook
 * obtain token
+
+If the token has expired, you can create a new one with the below command
+
+```
+kubeadm token create --print-join-command
+```
+execute the command prefixed with "sudo" on the worker nodes.
+
+If you would like to do things the hard way, execute the below section
+
+<details><summary>New token the hard way</summary>
+
 ```
 kubeadm tokenlist
 
@@ -332,7 +340,7 @@ This token only lasts 24 hrs.
 a new one can be generated with  
 
 ```
-kubead token  create
+kubeadm token  create
 ```
 
 Next we need the cert hash
@@ -343,28 +351,20 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 eafc5fe6462d3e29e0c13ce0df5f1d38bb8d31dcdf10b0803275289181b6f179
 ```
 
-.... good lord.. or we can  just use this damn command do do all of that for us
+</details>
 
-```
-kubeadm token create --print-join-command
-```
-execute teh command prefixed with "sudo" and profit....
-
-
-## networking
-overlay networks (software defined networking)
+## Networking
+Overlay networks (software defined networking)
 * flannel -layer 3 virtual network
-* alico - L3 and policy based traffic management
+* calico - L3 and policy based traffic management
 * weave net - multi-host network
 
 we will use calico in  this example
 
 
+### **Ports**
 
-
-### ports
-
-control plane
+**Control plane**
 | Component | Ports | Used By |
 | --- | --- | --- | 
 | api | 6443 | All
@@ -373,26 +373,16 @@ control plane
 | Controler manager | 10252 | Self |
 | Kubelet | 10250 | Control Plane |
 
-Worker nodes
+**Worker nodes**
 | Component | Ports | Used By |
 | --- | --- | --- | 
 | Kubelet | 10250 | Control Plane |
 | NodePort | 30000-32767 | All | 
 
 
-#
 
-## scalability
 
-## high availability
-
-## Disaster Recovery
-
-## Working with the Kubernetes cluster
-
-### using kubectl to interact with the cluster
-
-#### opperations
+## **Opperations**
 kubectl - primary tool
 * operations
   * apply/create - creates a resource
@@ -404,23 +394,23 @@ kubectl - primary tool
   * exec - execute a command on a container (like docker exec)
   * logs - view logs on a container - valueable troubleshooting
 
-#### resources
+## **Resources**
 
 * resources
   * nodes (no)
   * pods (po)
   * services (svc)
 
-#### output
+## **Output**
 * output
   * format
     * wide - output additional info
     * yaml - YAML formatted API object
     * json - JSON formatted API object
     * dry-run - print an objecct without sending it to the API server (skelliton)
-* 
+  
 
-#### kubectl
+## **Kubectl**
 
 ```
 kubectl [command] [type] [name] [flags]
@@ -429,7 +419,7 @@ kubectl get pods pod1 --output=yaml
 kubectl create deployment nginx --image=nginx
 ```
 
-configure autocomplete
+To enable autocomplete, perform the following 
 ```
 echo "source <(kubectl completion bash)" >> ~/.bashrc
 source ~/.bashrc
