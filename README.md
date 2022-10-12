@@ -237,15 +237,18 @@ Manifests describe the configuraiton of things (typically pods)
 the  kubelet watches this directory and any changes invoke actions.
 
 #### **Createing a control plane node**
-download a yaml manifest of our network.
+Download a yaml manifest of our network.
 
 ```
 wget https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
 [calico](https://docs.projectcalico.org/manifests/calico.yaml)
+The above configuration is modified to update the CIDR range for our cluster. this can be found [here](bootstrap/calico.yaml) under "CALICO_IPV4POOL_CIDR"
 
-kubeadm
+
+Use kubeadm to generate a valid cluster config, modify the [cluster config](bootstrap/ClusterConfiguration.yaml) to match our needs(optional), then init the cluster.
+
 ```
 kubeadm config print init-defaults | tee ClusterConfiguration.yaml
 ```
@@ -253,13 +256,13 @@ kubeadm config print init-defaults | tee ClusterConfiguration.yaml
 ```
 sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
 ```
-
+Next copy the credential file to the local users configuration to allow access.
 ```
 mkdir -p $HOME/.kube
 sudo cp - i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-
+Lastly apply the network config with kubectl
 ```
 kubectl apply -f calico.yaml
 ```
