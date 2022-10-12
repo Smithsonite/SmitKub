@@ -28,7 +28,6 @@ To document and deploy an ansible backed Kubernetes cluster.
           - [**Staic pod manifests**](#staic-pod-manifests)
       - [**Createing a control plane node**](#createing-a-control-plane-node)
       - [**Adding a node to a cluster**](#adding-a-node-to-a-cluster)
-      - [**Initialize control plane results**](#initialize-control-plane-results)
       - [**Add node to cluster**](#add-node-to-cluster)
   - [networking](#networking)
     - [ports](#ports)
@@ -65,6 +64,7 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [manage secrets](#manage-secrets)
       - [ansible vault](#ansible-vault)
 - [Victory](#victory)
+- [**Resources**](#resources-1)
 
 
 # **Whats it for**
@@ -256,30 +256,10 @@ kubeadm config print init-defaults | tee ClusterConfiguration.yaml
 ```
 sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
 ```
-Next copy the credential file to the local users configuration to allow access.
-```
-mkdir -p $HOME/.kube
-sudo cp - i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-```
-Lastly apply the network config with kubectl
-```
-kubectl apply -f calico.yaml
-```
+This will output things like the IP Address:port, Token and cert hash. This information is required to join worker nodes to the cluster.
 
-#### **Adding a node to a cluster**
-* install packages
-* kubeadm join -- network locaiton --bootstrap token -- certhash
-* download cluster information
-* node submits a CSR
-* CA signs the CSR automatically
-* Configures kubelet.conf
+<details><summary>kubeadmin init results</summary>
 
-```
-kubeadm join (ip address : port) --token (token) --discovery-token-ca-cert-hash (hash)
-```
-
-#### **Initialize control plane results**
 ```
 Your Kubernetes control-plane has initialized successfully!
 
@@ -302,6 +282,35 @@ Then you can join any number of worker nodes by running the following on each as
 kubeadm join 192.168.1.230:6443 --token abcdef.0123456789abcdef \
         --discovery-token-ca-cert-hash sha256:eafc5fe6462d3e29e0c13ce0df5f1d38bb8d31dcdf10b0803275289181b6f179
 ```
+
+</details>
+
+
+Next copy the credential file to the local users configuration to allow access.
+```
+mkdir -p $HOME/.kube
+sudo cp - i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+Lastly apply the network config with kubectl
+```
+kubectl apply -f calico.yaml
+```
+
+
+
+#### **Adding a node to a cluster**
+* install packages
+* kubeadm join -- network locaiton --bootstrap token -- certhash
+* download cluster information
+* node submits a CSR
+* CA signs the CSR automatically
+* Configures kubelet.conf
+
+```
+kubeadm join (ip address : port) --token (token) --discovery-token-ca-cert-hash (hash)
+```
+
 
 apply calico config
 
@@ -900,3 +909,10 @@ kubectl apply -f kube-flannel.yml
 ```
 
 Going to look into a kubernetes class on puralsight now.
+
+
+
+# **Resources**
+https://app.pluralsight.com/library/courses/kubernetes-installation-configuration-fundamentals/table-of-contents
+
+https://app.pluralsight.com/library/courses/configuring-managing-kubernetes-networking-services-ingress/table-of-contents
