@@ -29,17 +29,17 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [**Createing a control plane node**](#createing-a-control-plane-node)
       - [**Adding a node to a cluster steps**](#adding-a-node-to-a-cluster-steps)
       - [**Add node to cluster**](#add-node-to-cluster)
-  - [Networking](#networking)
+  - [**Networking**](#networking)
     - [**Ports**](#ports)
   - [**Opperations**](#opperations)
   - [**Resources**](#resources)
   - [**Output**](#output)
   - [**Kubectl**](#kubectl)
-      - [demo](#demo)
-    - [application deployments INTO the cluster](#application-deployments-into-the-cluster)
-      - [declaritive](#declaritive)
-        - [our manifest (manual review)](#our-manifest-manual-review)
-        - [generating a manifest with a dry run (automatic and great)](#generating-a-manifest-with-a-dry-run-automatic-and-great)
+- [**Demo**](#demo)
+  - [**Application deployments INTO the cluster**](#application-deployments-into-the-cluster)
+    - [**Imperative configuration**](#imperative-configuration)
+    - [**Declarative**](#declarative)
+      - [**Generating a manifest with a dry run**](#generating-a-manifest-with-a-dry-run)
         - [expose application](#expose-application)
         - [declaritive deployment](#declaritive-deployment)
 - [9-26-2022](#9-26-2022)
@@ -353,7 +353,7 @@ eafc5fe6462d3e29e0c13ce0df5f1d38bb8d31dcdf10b0803275289181b6f179
 
 </details>
 
-## Networking
+## **Networking**
 Overlay networks (software defined networking)
 * flannel -layer 3 virtual network
 * calico - L3 and policy based traffic management
@@ -425,13 +425,15 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-#### demo
+# **Demo**
 
+|NOTE!!!|
+| :-: | 
+|**Found that the super basic hello-world samples below do NOT support ARM processors. switched to good ole nginx.**|
 
+## **Application deployments INTO the cluster**
 
-### application deployments INTO the cluster
-
-####imperative configuration
+### **Imperative configuration**
 
 this is one object at a time...
 ```
@@ -442,13 +444,12 @@ kubectl create deployment nginx --image=nginx
 kubectl run nginx --image=nginx
 ```
 
-CLI isnt sustainable
+Imperative just means using the CLI to deploy things manually, CLI isnt sustainable
 
-#### declaritive
-define our desired state in code
-manifest
+### **Declarative**
+This has us define our desired state in code as a manifest
 
-##### our manifest (manual review)
+**Example manifest**
 ```
 apiVersion: apps/v1
 kind: Deployment
@@ -469,15 +470,17 @@ spec:
           name: hello-app
 
 ```
+We apply a manifest with kubectl 
 
+```
 kubectl apply -f deployment.yaml
+```
+#### **Generating a manifest with a dry run**
+This will use the "--dry-run" feature to generate a valid manifest file for us to modify and consume!
 
-##### generating a manifest with a dry run (automatic and great)
 ```
 kubectl create deployment hello-world --image=gcr.io/google-samples/hello-app:1.0 --dry-run=client -o yaml > deployment.yaml
 ```
-
-NOTE!!! Found that the super basic hello-world samples do NOT support ARM processors :0p. switched to good ole nginx.
 
 To list out the running containers on any cluster member.
 
