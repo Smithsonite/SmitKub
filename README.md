@@ -17,9 +17,9 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [**Cron job**](#cron-job)
 - [**Kubernetes Installation**](#kubernetes-installation)
   - [**Node Prep**](#node-prep)
-- [kubernetes installation and configuration](#kubernetes-installation-and-configuration)
-  - [Quick reference to recreating the cluster](#quick-reference-to-recreating-the-cluster)
-  - [insallation methods](#insallation-methods)
+  - [**Kubernetes Cluster configuration**](#kubernetes-cluster-configuration)
+    - [**Quick reference to recreating the cluster**](#quick-reference-to-recreating-the-cluster)
+  - [**Configuration tools and methods**](#configuration-tools-and-methods)
     - [Building the cluster](#building-the-cluster)
       - [software packages](#software-packages)
       - [bootstraping](#bootstraping)
@@ -159,12 +159,9 @@ An ansible role has been created to deploy a consistent kubernetes installation 
 This will install all of the required packages. As of now, this will leverage version 1.25.
 
 
+## **Kubernetes Cluster configuration**
 
-
-
-# kubernetes installation and configuration
-
-## Quick reference to recreating the cluster
+### **Quick reference to recreating the cluster**
 ```
 kubeadm config print init-defaults | tee ClusterConfiguration.yaml
 sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
@@ -179,12 +176,12 @@ kubectl apply -f calico.yaml
 
 [class link](https://app.pluralsight.com/courses/9f2f79a1-8408-4c5a-8060-e424161dc54e/table-of-contents)
 
-## insallation methods
-standard is kubeadm
+## **Configuration tools and methods**
+The standard control plane/cluster tool is [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
 
 [Kubernetes](https://github.com/kubernetes/kubernetes) is maintained on github 
 
-distro repo's is the prefered method for me, and the instructer
+You can install Kubernetes in multiple ways, but just using the OS Distributions repo is the preferred method for me, and the instructor.
 
 ### Building the cluster
 * install and configure packages
