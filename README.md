@@ -22,16 +22,16 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [**Configuration tools and methods**](#configuration-tools-and-methods)
     - [**Building the cluster**](#building-the-cluster)
       - [**Software packages**](#software-packages)
-      - [**Bootstraping**](#bootstraping)
+      - [**Bootstrapping**](#bootstrapping)
         - [**kubeadm created kubeconfig files**](#kubeadm-created-kubeconfig-files)
           - [**CA**](#ca)
-          - [**Staic pod manifests**](#staic-pod-manifests)
-      - [**Createing a control plane node**](#createing-a-control-plane-node)
+          - [**Static pod manifests**](#static-pod-manifests)
+      - [**Creating a control plane node**](#creating-a-control-plane-node)
       - [**Adding a node to a cluster steps**](#adding-a-node-to-a-cluster-steps)
       - [**Add node to cluster**](#add-node-to-cluster)
   - [**Networking**](#networking)
     - [**Ports**](#ports)
-  - [**Opperations**](#opperations)
+  - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
   - [**Kubectl**](#kubectl)
@@ -40,12 +40,12 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [**Imperative configuration**](#imperative-configuration)
     - [**Declarative**](#declarative)
       - [**Generating a manifest with a dry run**](#generating-a-manifest-with-a-dry-run)
-        - [expose application](#expose-application)
-        - [declaritive deployment](#declaritive-deployment)
+      - [**Expose application**](#expose-application)
+        - [declarative deployment](#declarative-deployment)
 - [9-26-2022](#9-26-2022)
-- [successfull exposure](#successfull-exposure)
-  - [confirmed](#confirmed)
-    - [netplan config](#netplan-config)
+- [successful exposure](#successful-exposure)
+  - [Confirmed](#confirmed)
+    - [Netplan config](#netplan-config)
   - [cleanup](#cleanup)
 - [calico and external IP](#calico-and-external-ip)
 - [ScratchNotes](#scratchnotes)
@@ -63,16 +63,16 @@ To document and deploy an ansible backed Kubernetes cluster.
 
 
 # **Whats it for**
-The environment is used for several things. Firstly it is used in order to provide a kubernets lab environment. Second it is used as a method of hosting some home utilities such as a plex server, and potentially other services such as pihole. 
+The environment is used for several things. Firstly it is used in order to provide a kubernetes lab environment. Second it is used as a method of hosting some home utilities such as a Plex server, and potentially other services such as pihole. 
 
 # **Components**
-This cluster is designed around haveing 4 raspberry pi 4b 8gb units. One control module and 3 workers. The control module will perform triple duty as an ansible controller and GitHub/ADO runner.
+This cluster is designed around having 4 raspberry pi 4b 8gb units. One control module and 3 workers. The control module will perform triple duty as an ansible controller and GitHub/ADO runner.
 
 # **Home Network Setup**
 The nodes have DHCP reservations for the "smithsonite.home" network. Their information is as follows
 
 
-| Name | Mac | Primary IP | Alternet IP |
+| Name | Mac | Primary IP | Alternate IP |
 | :---: | :---: | :---: | :---: |
 | autobot | E4:5F:01:B9:98:00 |192.168.1.230 | 192.168.2.235 |
 | smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | |
@@ -128,10 +128,10 @@ The following playbooks were created in order to handle the following  purposes
 * [picool](playbooks/picool/main.yml) - This is the fan software for the classic pi cases
   * This has a dependency of the [picool](https://galaxy.ansible.com/csmithson12345/picool) ansible role
 * [updates](playbooks/updates/main.yml) - This performs apt updates and upgrades
-  * This has a dependency of the [apupdate](https://galaxy.ansible.com/csmithson12345/aptupdate) ansible role
+  * This has a dependency of the [aptupdate](https://galaxy.ansible.com/csmithson12345/aptupdate) ansible role
 
 ### **Cron job**
-while some cron jobs will apparently leverage another user... using crontab -e dosent actually seem to do so... nor does it seem to obey any path or home modification.
+while some cron jobs will apparently leverage another user... using crontab -e doesn't actually seem to do so... nor does it seem to obey any path or home modification.
 what i was able to do was execute a command as the ansible user leveraging su. it STILL does not leverage the path that the ansible user has... so
 
 * you need to navigate to the ansible dir for the specific playbook because you cannot pump the ansible.cfg in any other way
@@ -191,7 +191,7 @@ You can install Kubernetes in multiple ways, but just using the OS Distributions
 * kubectl
 
 
-#### **Bootstraping**
+#### **Bootstrapping**
 
 ```
 kubeadm init
@@ -201,8 +201,8 @@ kubeadm init
 * Generate Kubeconfig files
 * Generating static pod manifests
 * wait for control plane pods
-* tains the control plane node - keeps pods from running on the control plane node
-* generates a bootdstrap token
+* taints the control plane node - keeps pods from running on the control plane node
+* generates a bootstrap token
 * starts and add-on components/pods.
 
 ##### **kubeadm created kubeconfig files**
@@ -219,11 +219,11 @@ These files are used to define how to connect to the cluster and include
   * scheduler.conf 
 
 ###### **CA**
-The cluster procuces a self-signed CA
+The cluster produces a self-signed CA
 it CAN be a part of an external PKI, but typically its just a part of the cluster. This secures cluster communications, authentication of users and cluster components. The files live in /etc/kubernetes/pki
 
-###### **Staic pod manifests**
-Manifests describe the configuraiton of things (typically pods)
+###### **Static pod manifests**
+Manifests describe the configuration of things (typically pods)
 /etc/kubernetes/manifests
 * etcd
 * api server
@@ -231,7 +231,7 @@ Manifests describe the configuraiton of things (typically pods)
 * scheduler
 the  kubelet watches this directory and any changes invoke actions.
 
-#### **Createing a control plane node**
+#### **Creating a control plane node**
 Download a yaml manifest of our network.
 
 ```
@@ -297,7 +297,7 @@ kubectl apply -f calico.yaml
 
 #### **Adding a node to a cluster steps**
 * install packages
-* kubeadm join -- network locaiton --bootstrap token -- certhash
+* kubeadm join -- network location --bootstrap token -- certhash
 * download cluster information
 * node submits a CSR
 * CA signs the CSR automatically
@@ -370,7 +370,7 @@ we will use calico in  this example
 | api | 6443 | All
 | etcd | 2379-2380 | API/etcd |
 | Scheduler | 10251 | Self |
-| Controler manager | 10252 | Self |
+| Controller manager | 10252 | Self |
 | Kubelet | 10250 | Control Plane |
 
 **Worker nodes**
@@ -382,7 +382,7 @@ we will use calico in  this example
 
 
 
-## **Opperations**
+## **Operations**
 kubectl - primary tool
 * operations
   * apply/create - creates a resource
@@ -390,9 +390,9 @@ kubectl - primary tool
   * explain - documentation for the resource
   * delete - deletes a resource
   * get - list resources
-  * describe - deteiled resource information
+  * describe - detailed resource information
   * exec - execute a command on a container (like docker exec)
-  * logs - view logs on a container - valueable troubleshooting
+  * logs - view logs on a container - valuable troubleshooting
 
 ## **Resources**
 
@@ -407,7 +407,7 @@ kubectl - primary tool
     * wide - output additional info
     * yaml - YAML formatted API object
     * json - JSON formatted API object
-    * dry-run - print an objecct without sending it to the API server (skelliton)
+    * dry-run - print an object without sending it to the API server (skeleton)
   
 
 ## **Kubectl**
@@ -444,7 +444,7 @@ kubectl create deployment nginx --image=nginx
 kubectl run nginx --image=nginx
 ```
 
-Imperative just means using the CLI to deploy things manually, CLI isnt sustainable
+Imperative just means using the CLI to deploy things manually, CLI isn't sustainable
 
 ### **Declarative**
 This has us define our desired state in code as a manifest
@@ -495,7 +495,9 @@ kubectl exec -it hello-world-pod -- /bin/bash
 ```
 
 
-##### expose application
+#### **Expose application**
+
+An application is exposed by creating a service for it. However a service does not necessarily have exposure outside of the cluster itself. For that we will tackle Ingress and LoadBalancers.
 
 ```
 kubectl expose deployment nginx-6d666844f6-rrjjn --port=80 --target-port=80
@@ -548,8 +550,8 @@ Commercial support is available at
 ```
 
 
-##### declaritive deployment
-applicaiton
+##### declarative deployment
+application
 ```
 kubectl create deployment nginx --image=nginx --dry-run=client -o yaml | more
 ```
@@ -572,7 +574,7 @@ kubectl apply -f deployment.yaml
 
 
 # 9-26-2022
-pickingup
+picking up
 navigated to /git/SmitKube/appdeploy/hello-world
 
 had to 
@@ -584,14 +586,13 @@ kubectl expose deployment nginx --port=80 --target-port=80 --dry-run=client -o y
 kubectl apply -f service.yaml
 ```
 
-how do we expose the app on the routeable network.
+how do we expose the app on the routable network.
 ```
 kubectl expose deployment nginx --port=80 --target-port=80 --type=NodePort --dry-run=client -o yaml > service.yaml
 ```
-# successfull exposure
-ooookaaay...
-per this [helpful article](https://medium.com/swlh/kubernetes-external-ip-service-type-5e5e9ad62fcd) The app is successfully exposed by leveraging the control node's ip address in the configuration. I suspect that if i configure a service such as keepalived on multiple control nodes, the issue of "HA" would be resolved.
-in the meantime i am going to try and provision some specific IP addrsses on the control node and see if i can get nginx to follow it.
+# successful exposure
+Per this [helpful article](https://medium.com/swlh/kubernetes-external-ip-service-type-5e5e9ad62fcd) The app is successfully exposed by leveraging the control node's ip address in the configuration. I suspect that if i configure a service such as keepalived on multiple control nodes, the issue of "HA" would be resolved.
+in the meantime i am going to try and provision some specific IP addresses on the control node and see if i can get nginx to follow it.
 
 ```
 ansible@autobot:~/git/SmitKub/appdeploy/hello-world$ cat service.yaml 
@@ -621,10 +622,10 @@ Current DNS Server: 192.168.1.231
         DNS Domain: smithsonite.home
 ```
 
-## confirmed
+## Confirmed
 Confirmed working when a specific ip address (192.168.1.235) was assigned to the control node
 
-### netplan config
+### Netplan config
 
 ```
 ansible@autobot:~/git/SmitKub/appdeploy/hello-world$ cat /etc/netplan/50-cloud-init.yaml
@@ -694,7 +695,7 @@ Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-a
 
 
 ### organization
-In the same way i handled the primary pipeline and child piplines... you can use the import_tasks to bring it other files containing tasks.
+In the same way i handled the primary pipeline and child pipelines... you can use the import_tasks to bring it other files containing tasks.
 
 
 
@@ -707,12 +708,12 @@ a meta directory
 a tasks folder
 
 roles are automatically picked up from the global roles folder /etc/ansible/roles.
-they are also automatically picked up if there is a roles folder in  the DIR your exeucting from
-youc an also configure the ansible.cfg file to point to a roles dir.
+they are also automatically picked up if there is a roles folder in  the DIR your executing from
+you can also configure the ansible.cfg file to point to a roles dir.
 
 typically good practice to make an ansible.cfg file in your project directory
 inside of that you will want to specify a roles path *(usually ./roles)
-that way conflicting versions of a role will not overwrite eachother.
+that way conflicting versions of a role will not overwrite each other.
 
 
 ##### galaxy
@@ -727,14 +728,14 @@ ansible-galaxy role init test
 
 ### manage secrets
 #### ansible vault
-ansible vault allows you to encrypt fiels and store them in source control
+ansible vault allows you to encrypt files and store them in source control
 i am not a fan  of that.
-it alos seems to need a password to access it. 
+it also seems to need a password to access it. 
 
 hold back a specific apt package with apt hold
 https://docs.ansible.com/ansible/latest/collections/ansible/builtin/dpkg_selections_module.html
 
-find avaliable versions
+find available versions
 ```
 apt-cache showpkg <package-name>
 ```
@@ -745,7 +746,7 @@ sudo apt install package=version -V
 sudo apt install vault=1.11.2-1 -V
 
 
-this seems to work with the sample playbook below. running additonal apt updates and upgrades did not upgrade vault.
+this seems to work with the sample playbook below. running additional apt updates and upgrades did not upgrade vault.
 ```
 ---
 - name: apt lock testing
@@ -891,7 +892,7 @@ kubeadm join 192.168.1.230:6443 --token tyyxjh.6p6046i6os50ovbz \
 
 
 much of the configuration can be found in /etc/kubernetes/ now.
-The kubeadm init command and its config are my consern now. There are commands one passes in to set specific configs such as the cidr range etc. id like all of that in a config file... as is shown when configuring the [cgroup driver](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/). id like to see where those can go into the specified config file.
+The kubeadm init command and its config are my concern now. There are commands one passes in to set specific configs such as the cidr range etc. id like all of that in a config file... as is shown when configuring the [cgroup driver](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/). id like to see where those can go into the specified config file.
 
 modifying the pod cidr 
 https://tufora.com/tutorials/kubernetes/change-kubernetes-pods-cidr
@@ -901,7 +902,7 @@ install flannel
 kubectl apply -f kube-flannel.yml
 ```
 
-Going to look into a kubernetes class on puralsight now.
+Going to look into a kubernetes class on Puralsight now.
 
 
 
