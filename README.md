@@ -20,10 +20,10 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [**Kubernetes Cluster configuration**](#kubernetes-cluster-configuration)
     - [**Quick reference to recreating the cluster**](#quick-reference-to-recreating-the-cluster)
   - [**Configuration tools and methods**](#configuration-tools-and-methods)
-    - [Building the cluster](#building-the-cluster)
-      - [software packages](#software-packages)
-      - [bootstraping](#bootstraping)
-        - [CA](#ca)
+    - [**Building the cluster**](#building-the-cluster)
+      - [**Software packages**](#software-packages)
+      - [**Bootstraping**](#bootstraping)
+        - [**CA**](#ca)
         - [kubeadm created kubeconfig files](#kubeadm-created-kubeconfig-files)
         - [staic pod manifests](#staic-pod-manifests)
         - [Createing a control plane node](#createing-a-control-plane-node)
@@ -183,28 +183,20 @@ The standard control plane/cluster tool is [kubeadm](https://kubernetes.io/docs/
 
 You can install Kubernetes in multiple ways, but just using the OS Distributions repo is the preferred method for me, and the instructor.
 
-### Building the cluster
+### **Building the cluster**
 * install and configure packages
 * create the cluster
 * Configure Pod Networking
 * Join Nodes to cluster
 
-#### software packages
+#### **Software packages**
 * containerd
 * kubelet
 * kubeadm
 * kubectl
 
-sequence of commands
-(required on all nodes, both ctr plane and workers)
-install container d
-add kubernetes pg key
-add kubelet, kubeadm kubectl  
-mark those packages with HOLD
-(all handled by the ansible runbook)
 
-#### bootstraping
-kubeadm
+#### **Bootstraping**
 
 ```
 kubeadm init
@@ -218,8 +210,8 @@ kubeadm init
 * generates a bootdstrap token
 * starts and add-on components/pods.
 
-##### CA
-self-signed CAA
+##### **CA**
+The cluster procuces a self-signed CA
 it CAN be a part of an external PKI
 this secures cluster communications
   api server
