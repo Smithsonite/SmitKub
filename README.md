@@ -1,10 +1,8 @@
 # **SmitKub**
-# **Purpose**
 To document and deploy an ansible backed Kubernetes cluster. 
 
 # **ToC**
 - [**SmitKub**](#smitkub)
-- [**Purpose**](#purpose)
 - [**ToC**](#toc)
 - [**Whats it for**](#whats-it-for)
 - [**Components**](#components)
@@ -41,14 +39,14 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [**Declarative**](#declarative)
       - [**Generating a manifest with a dry run**](#generating-a-manifest-with-a-dry-run)
       - [**Expose application**](#expose-application)
-        - [declarative deployment](#declarative-deployment)
+      - [**Declarative deployment**](#declarative-deployment)
+- [ScratchNotes](#scratchnotes)
 - [9-26-2022](#9-26-2022)
 - [successful exposure](#successful-exposure)
   - [Confirmed](#confirmed)
     - [Netplan config](#netplan-config)
   - [cleanup](#cleanup)
 - [calico and external IP](#calico-and-external-ip)
-- [ScratchNotes](#scratchnotes)
   - [todo](#todo)
   - [kubernetes installation methods](#kubernetes-installation-methods)
     - [organization](#organization)
@@ -550,7 +548,7 @@ Commercial support is available at
 ```
 
 
-##### declarative deployment
+#### **Declarative deployment**
 application
 ```
 kubectl create deployment nginx --image=nginx --dry-run=client -o yaml | more
@@ -572,7 +570,9 @@ to update an  application,  update the manifest and then re-apply with kubectl
 kubectl apply -f deployment.yaml
 ```
 
+<details><summary>Ad-hoc notes</summary>
 
+# ScratchNotes
 # 9-26-2022
 picking up
 navigated to /git/SmitKube/appdeploy/hello-world
@@ -680,7 +680,7 @@ it LOOKS like ingress services just get a public ip.
 so ingress deployment > service > application deployment.
 
 
-# ScratchNotes
+
 ## todo
 Settle on a method to schedule jobs ( a cronjob direct on autobot, or a github-actions based schedule)
 
@@ -904,7 +904,7 @@ kubectl apply -f kube-flannel.yml
 
 Going to look into a kubernetes class on Puralsight now.
 
-
+</details>
 
 # **Resources**
 https://app.pluralsight.com/library/courses/kubernetes-installation-configuration-fundamentals/table-of-contents
