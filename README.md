@@ -7,6 +7,7 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [**Whats it for**](#whats-it-for)
 - [**Components**](#components)
 - [**Home Network Setup**](#home-network-setup)
+- [**Storage**](#storage)
 - [**Ansible Setup**](#ansible-setup)
   - [**RPI Setup**](#rpi-setup)
     - [**Control system "Autobot"**](#control-system-autobot)
@@ -76,6 +77,16 @@ The nodes have DHCP reservations for the "smithsonite.home" network. Their infor
 | smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | |
 | smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | |
 | smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | |
+| SMITSTORE | 18:31:BF:A9:49:40 | 192.168.1.1 | |
+
+# **Storage**
+Currently an ssd is attached directly to my SOHO router. 
+i could not get any OS to mount it, until i found a blog stating needed ot use version 2 of the protocol. the connection string is as follows
+```
+mount.cifs -o rw,vers=2.0,credentials=/root/.smitstorecredentials //smitstore.smithsonite.home/storage /media/smitstore/
+```
+As this appears to be from an [11 year old post on the topic](https://stackoverflow.com/questions/6734400/what-does-cifs-mount-failed-w-return-code-22-indicate/73002054#73002054) i can only assume the samba server baked into my router is old as balls...and an updated solution should be explored at a later date.
+
 
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
