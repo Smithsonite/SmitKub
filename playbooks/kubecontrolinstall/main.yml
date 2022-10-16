@@ -5,7 +5,7 @@
   become: true
 
   roles:
-    - csmithson12345.kubecluster
+    - role: csmithson12345.kubecluster
       vars:
         cifsstorage: true
         cifscredentialfile: /root/.smitstorecredentials
