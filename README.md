@@ -95,6 +95,9 @@ automount line
 //smitstore.smithsonite.home/storage /media/smitstore cifs vers=2.0,credentials=/root/.smitstorecredentials
 ```
 
+Also, it appears that kubernetes does not allow for [SMB based mounts](https://kubernetes.io/docs/concepts/storage/storage-classes/) for volumes,
+in order to get around this, the same SMB share will be configured on each worker node. then they will be mounted as a local volume.
+
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
 Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under "ansible SSH" in keeper). This keypair is to be uploaded to the RPI's for the ansible users.
