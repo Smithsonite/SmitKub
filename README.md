@@ -98,6 +98,9 @@ automount line
 Also, it appears that kubernetes does not allow for [SMB based mounts](https://kubernetes.io/docs/concepts/storage/storage-classes/) for volumes,
 in order to get around this, the same SMB share will be configured on each worker node. then they will be mounted as a local volume.
 
+update: it seems that mounting a local volume requires a node affinity... meaning its not a good long term solution. Getting an NFS fileshare setup is going to have to happen.
+
+
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
 Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under "ansible SSH" in keeper). This keypair is to be uploaded to the RPI's for the ansible users.

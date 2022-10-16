@@ -63,5 +63,11 @@
         "vsmarketplacebadge",
         "wifis",
         "wlan"
+    ],
+    "ignoreWords": [
+        "cifs",
+        "fileshare",
+        "smitstore",
+        "smitstorecredentials"
     ]
 }
