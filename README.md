@@ -87,6 +87,13 @@ mount.cifs -o rw,vers=2.0,credentials=/root/.smitstorecredentials //smitstore.sm
 ```
 As this appears to be from an [11 year old post on the topic](https://stackoverflow.com/questions/6734400/what-does-cifs-mount-failed-w-return-code-22-indicate/73002054#73002054) i can only assume the samba server baked into my router is old as balls...and an updated solution should be explored at a later date.
 
+[More on cifs config](https://linuxhint.com/mount-smb-shares-on-ubuntu/)
+
+automount line
+
+```
+//smitstore.smithsonite.home/storage /media/smitstore cifs vers=2.0,credentials=/root/.smitstorecredentials
+```
 
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
