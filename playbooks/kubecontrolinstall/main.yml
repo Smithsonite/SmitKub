@@ -10,6 +10,7 @@
         nfsstorage: true
         nfslocalpath: /media/smitstore
         nfsremotepath: //smitstore.smithsonite.home/smitstore
+        nfssoptions: rw
         # cifsstorage: true
         # cifscredentialfile: /root/.smitstorecredentials
         # cifsremotepath: //smitstore.smithsonite.home/storage
