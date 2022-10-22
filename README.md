@@ -8,6 +8,7 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [**Components**](#components)
 - [**Home Network Setup**](#home-network-setup)
 - [**Storage**](#storage)
+- [*NFS*](#nfs)
 - [**Ansible Setup**](#ansible-setup)
   - [**RPI Setup**](#rpi-setup)
     - [**Control system "Autobot"**](#control-system-autobot)
@@ -100,6 +101,8 @@ in order to get around this, the same SMB share will be configured on each worke
 
 update: it seems that mounting a local volume requires a node affinity... meaning its not a good long term solution. Getting an NFS fileshare setup is going to have to happen.
 
+# *NFS*
+[resource](https://phoenixnap.com/kb/ubuntu-nfs-server#:~:text=1%20Install%20NFS%20Kernel%20Server.%20Start%20setting%20up,%E2%80%9Cy%E2%80%9D%20and%20press%20ENTER%20to%20start%20the%20installation.)
 
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
