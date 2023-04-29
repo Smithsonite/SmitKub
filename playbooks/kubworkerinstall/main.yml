@@ -6,7 +6,7 @@
 
   roles:
     - role: csmithson12345.kubecluster
-      # vars:
+      vars:
         nfsstorage: false
       #   nfslocalpath: /media/smitstore
       #   nfsremotepath: smitstore.smithsonite.home:/media/smitstore
