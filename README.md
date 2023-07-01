@@ -31,6 +31,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [**Add node to cluster**](#add-node-to-cluster)
   - [**Networking**](#networking)
     - [**Ports**](#ports)
+    - [**Moving from Calico to Flannel for BaremetalLB support**](#moving-from-calico-to-flannel-for-baremetallb-support)
   - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
@@ -186,7 +187,7 @@ This will install all of the required packages. As of now, this will leverage ve
 kubeadm config print init-defaults | tee ClusterConfiguration.yaml
 sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
 mkdir -p $HOME/.kube
-sudo cp - i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f calico.yaml
 ```
@@ -405,7 +406,15 @@ we will use calico in  this example
 | NodePort | 30000-32767 | All | 
 
 
+### **Moving from Calico to Flannel for BaremetalLB support**
+https://www.buzzwrd.me/index.php/2022/02/16/calico-to-flannel-changing-kubernetes-cni-plugin/
 
+
+```
+kubectl delete -f calico.yaml
+
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+```
 
 ## **Operations**
 kubectl - primary tool
