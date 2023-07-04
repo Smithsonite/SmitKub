@@ -15,6 +15,7 @@
         "bootstrappers",
         "campsmit",
         "certhash",
+        "Cilium",
         "cgroups",
         "containerd",
         "crictl",

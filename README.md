@@ -31,7 +31,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [**Add node to cluster**](#add-node-to-cluster)
   - [**Networking**](#networking)
     - [**Ports**](#ports)
-    - [**Moving from Calico to Flannel for BaremetalLB support**](#moving-from-calico-to-flannel-for-baremetallb-support)
+    - [**Cilium Notes**](#cilium-notes)
   - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
@@ -123,8 +123,16 @@ Additional users will be configured as needed. The first user should be "ansible
  sudo chmod 644 /home/ansible/.ssh/id_rsa.pub
  sudo chown ansible:ansible /home/ansible/.ssh -R
  echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
- sudo apt install python3-pip
+ sudo su
+ su ansible
+ python3 -m pip install --user ansible
  ```
+
+Once ansible is installed modify your .bashrc file with the following line
+```
+export PATH=/home/ansible/.local/bin:$PATH
+```
+
 The user may be assumed locally by executing
 ```
 sudo su
@@ -406,9 +414,42 @@ we will use calico in  this example
 | NodePort | 30000-32767 | All | 
 
 
-### **Moving from Calico to Flannel for BaremetalLB support**
-https://www.buzzwrd.me/index.php/2022/02/16/calico-to-flannel-changing-kubernetes-cni-plugin/
+### **Cilium Notes**
+https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/
 
+installing Cilium instead of calico.
+
+
+```
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/master/stable.txt)
+CLI_ARCH=arm64
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+
+```
+cilium wont start 
+https://answers.launchpad.net/ubuntu/+question/702382
+
+https://github.com/cilium/cilium/issues/22482
+
+https://github.com/cilium/cilium/issues/26274
+
+level=info msg="Establishing connection to apiserver" host="https://10.96.0.1:443" subsys=k8s-client
+level=info msg="Connected to apiserver" subsys=k8s-client
+level=info msg="Start hook executed" duration=24.560053ms function="client.(*compositeClientset).onStart" subsys=hive
+level=info msg="Start hook executed" duration=73.603937ms function="cmd.newDatapath.func1 (daemon_main.go:1631)" subsys=hive
+level=info msg="Start hook executed" duration="19.944µs" function="*resource.resource[*k8s.io/api/core/v1.Node].Start" subsys=hive
+level=info msg="Start hook executed" duration="3.797µs" function="*resource.resource[*github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2.CiliumNode].Start" subsys=hive
+level=info msg="Auto-disabling \"enable-node-port\", \"enable-external-ips\", \"bpf-lb-sock\", \"enable-host-port\" features and falling back to \"enable-host-legacy-routing\"" subsys=daemon   
+level=info msg="Inheriting MTU from external network interface" device=wlan0 ipAddr=192.168.1.230 mtu=1500 subsys=mtu
+level=error msg="Start hook failed" error="daemon creation failed: unable to setup device manager: protocol not supported" function="cmd.newDaemonPromise.func1 (daemon_main.go:1684)" subsys=hive
+level=info msg=Stopping subsys=hive
+level=info msg="Stop hook executed" duration="45.13µs" function="*resource.resource[*github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2.CiliumNode].Stop" subsys=hive
+level=info msg="Stop hook executed" duration="60.203µs" function="*resource.resource[*k8s.io/api/core/v1.Node].Stop" subsys=hive
+level=info msg="Stop hook executed" duration="69.129µs" function="client.(*compositeClientset).onStop" subsys=hive
+level=info msg="Stopped gops ser
 
 ```
 kubectl delete -f calico.yaml
