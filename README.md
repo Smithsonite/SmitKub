@@ -32,6 +32,7 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [**Networking**](#networking)
     - [**Ports**](#ports)
     - [**Cilium Notes**](#cilium-notes)
+    - [**MetalLB Install**](#metallb-install)
   - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
@@ -108,6 +109,11 @@ update: it seems that mounting a local volume requires a node affinity... meanin
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
 Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under "ansible SSH" in keeper). This keypair is to be uploaded to the RPI's for the ansible users.
+```
+python3 -m pip install --upgrade --user ansible
+#add to path with
+export PATH=/home/ansible/.local/bin:$PATH
+```
 
 ## **RPI Setup**
 The pi's are configured with ubuntu 22.04 and with my own SSH keypair with the user csmithson and the campsmit network.
@@ -123,7 +129,9 @@ Additional users will be configured as needed. The first user should be "ansible
  sudo chmod 644 /home/ansible/.ssh/id_rsa.pub
  sudo chown ansible:ansible /home/ansible/.ssh -R
  echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+ sudo apt install python3-pip
  sudo su
+
  su ansible
  python3 -m pip install --user ansible
  ```
@@ -197,13 +205,26 @@ sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containe
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-kubectl apply -f calico.yaml
+# deprecated for cilium kubectl apply -f calico.yaml
+#install cilium
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=arm64
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+cilium install
+#install Helm
+
+
+
 ```
 [ClusterConfiguration.yaml](bootstrap/ClusterConfiguration.yaml) and [calico.yaml](bootstrap/calico.yaml) can be found in the bootstrap directory.
 
 
-
 [class link](https://app.pluralsight.com/courses/9f2f79a1-8408-4c5a-8060-e424161dc54e/table-of-contents)
+
+
 
 ## **Configuration tools and methods**
 The standard control plane/cluster tool is [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
@@ -430,6 +451,11 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 ```
 cilium wont start 
+
+possible solution!
+https://github.com/cilium/cilium/issues/20901
+
+references/logs
 https://answers.launchpad.net/ubuntu/+question/702382
 
 https://github.com/cilium/cilium/issues/22482
@@ -455,6 +481,39 @@ level=info msg="Stopped gops ser
 kubectl delete -f calico.yaml
 
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+```
+
+### **MetalLB Install**
+following their [installation page](https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml), it is not clear when using helm what the process to apply a config is using a "CR". i THINK that means custom resource. using the simple manifest will leverage config maps, so thats how we will roll today.
+
+apparently this used to be done via configmaps, but that has been abandond in support of custom resources... which sound shady as hell.
+
+installing a custom resource is apparently as simple as producing yaml document and applying it
+
+
+```
+kubectl apply -f ipaddrespoolcr.yaml
+```
+
+WOO success
+
+valid custom config is
+
+```
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.1.239-192.168.1.240
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: advert
+  namespace: metallb-system
 ```
 
 ## **Operations**
