@@ -21,7 +21,7 @@ apiServer:
   timeoutForControlPlane: 4m0s
 apiVersion: kubeadm.k8s.io/v1beta3
 certificatesDir: /etc/kubernetes/pki
-clusterName: kubernetes
+clusterName: smitkube
 controllerManager: {}
 dns: {}
 etcd:
@@ -29,12 +29,8 @@ etcd:
     dataDir: /var/lib/etcd
 imageRepository: registry.k8s.io
 kind: ClusterConfiguration
-kubernetesVersion: 1.25.0
+kubernetesVersion: 1.26.0
 networking:
   dnsDomain: cluster.local
   serviceSubnet: 10.96.0.0/12
 scheduler: {}
----
-kind: KubeletConfiguration
-apiVersion: kubelet.config.k8s.io/v1beta1
-cgroupDriver: systemd

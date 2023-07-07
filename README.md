@@ -8,7 +8,7 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [**Components**](#components)
 - [**Home Network Setup**](#home-network-setup)
 - [**Storage**](#storage)
-- [*NFS*](#nfs)
+    - [*NFS*](#nfs)
 - [**Ansible Setup**](#ansible-setup)
   - [**RPI Setup**](#rpi-setup)
     - [**Control system "Autobot"**](#control-system-autobot)
@@ -28,11 +28,14 @@ To document and deploy an ansible backed Kubernetes cluster.
           - [**Static pod manifests**](#static-pod-manifests)
       - [**Creating a control plane node**](#creating-a-control-plane-node)
       - [**Adding a node to a cluster steps**](#adding-a-node-to-a-cluster-steps)
-      - [**Add node to cluster**](#add-node-to-cluster)
+    - [**Add node to cluster**](#add-node-to-cluster)
   - [**Networking**](#networking)
     - [**Ports**](#ports)
-    - [**Cilium Notes**](#cilium-notes)
-    - [**MetalLB Install**](#metallb-install)
+    - [**MetalLB**](#metallb)
+      - [**Prep**](#prep)
+      - [**Install**](#install)
+      - [**Configuration**](#configuration)
+  - [**Certificate management**](#certificate-management)
   - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
@@ -83,6 +86,12 @@ The nodes have DHCP reservations for the "smithsonite.home" network. Their infor
 | SMITSTORE | 18:31:BF:A9:49:40 | 192.168.1.1 | |
 
 # **Storage**
+
+SmitStore is currently offline. It was found that NFS servers could not handle the kind of disk reservations that some databases required. As such, all of the notes around NFS are for historical/archive reference. As SAN solution is being evaluated by means of an 8 port switch and an additional RPI4.
+
+<details><summary>Archived SmitStore NFS Notes</summary>
+
+
 Currently an ssd is attached directly to my SOHO router. 
 i could not get any OS to mount it, until i found a blog stating needed ot use version 2 of the protocol. the connection string is as follows
 ```
@@ -103,17 +112,15 @@ in order to get around this, the same SMB share will be configured on each worke
 
 update: it seems that mounting a local volume requires a node affinity... meaning its not a good long term solution. Getting an NFS fileshare setup is going to have to happen.
 
-# *NFS*
+### *NFS*
 [resource](https://phoenixnap.com/kb/ubuntu-nfs-server#:~:text=1%20Install%20NFS%20Kernel%20Server.%20Start%20setting%20up,%E2%80%9Cy%E2%80%9D%20and%20press%20ENTER%20to%20start%20the%20installation.)
+
+</details>
 
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
-Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under "ansible SSH" in keeper). This keypair is to be uploaded to the RPI's for the ansible users.
-```
-python3 -m pip install --upgrade --user ansible
-#add to path with
-export PATH=/home/ansible/.local/bin:$PATH
-```
+Ansible is installed and running under a user named "ansible". It has an SSH keypair (found under "ansible SSH" in keeper). This keypair is to be uploaded to the RPI's for the Ansible users. Installation instructions are found below. The Ansible secrets vault requires a password under the homedir under ".ansiblepass".  This is kept in plain text and is a single line entry, and is not the passwords kept in the vault, but the password TO the vault. The password can be found in the ansible keeper entry and involves long range targets.
+
 
 ## **RPI Setup**
 The pi's are configured with ubuntu 22.04 and with my own SSH keypair with the user csmithson and the campsmit network.
@@ -149,6 +156,8 @@ su ansible
 
 
 ### **Worker Systems**
+
+This is the minimal setup required before we can remotely execute Ansible playbooks on this systems. Ideally these wont have to be logged back into after these commands are run.
 
  ```
  sudo useradd -d /home/ansible -m -s/bin/bash ansible
@@ -193,7 +202,7 @@ An ansible role has been created to deploy a consistent kubernetes installation 
 * [kubworkerinstall](playbooks/kubworkerinstall/main.yml)
 * [kubeconrolinstall](playbooks/kubecontrolinstall/main.yml)
 
-This will install all of the required packages. As of now, this will leverage version 1.25.
+This will install all of the required packages. As of now, this will leverage version 1.26.
 
 
 ## **Kubernetes Cluster configuration**
@@ -201,11 +210,10 @@ This will install all of the required packages. As of now, this will leverage ve
 ### **Quick reference to recreating the cluster**
 ```
 kubeadm config print init-defaults | tee ClusterConfiguration.yaml
-sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
+sudo  kubeadm init --config=ClusterConfiguration.yaml
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-# deprecated for cilium kubectl apply -f calico.yaml
 #install cilium
 CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
 CLI_ARCH=arm64
@@ -215,7 +223,9 @@ sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 cilium install
 #install Helm
-
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
 
 
 ```
@@ -287,6 +297,10 @@ Manifests describe the configuration of things (typically pods)
 the  kubelet watches this directory and any changes invoke actions.
 
 #### **Creating a control plane node**
+
+<details><summary>Archived Calico Config</summary>
+NOTE: Calico information is archived, as the CNI Cilium  has been adopted.
+
 Download a yaml manifest of our network.
 
 ```
@@ -297,6 +311,7 @@ wget https://docs.projectcalico.org/manifests/calico.yaml
 
 The above configuration is modified to update the CIDR range for our cluster. this can be found [here](bootstrap/calico.yaml) under "CALICO_IPV4POOL_CIDR"
 
+</details>
 
 Use kubeadm to generate a valid cluster config, modify the [cluster config](bootstrap/ClusterConfiguration.yaml) to match our needs(optional), then init the cluster.
 
@@ -305,7 +320,7 @@ kubeadm config print init-defaults | tee ClusterConfiguration.yaml
 ```
 
 ```
-sudo  kubeadm init --config=ClusterConfiguration.yaml --cri-socket /run/containerd/containerd.sock
+sudo  kubeadm init --config=ClusterConfiguration.yaml 
 ```
 This will output things like the IP Address:port, Token and cert hash. This information is required to join worker nodes to the cluster.
 
@@ -343,11 +358,23 @@ mkdir -p $HOME/.kube
 sudo cp - i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-Lastly apply the network config with kubectl
+
+Now that we have a cluster, we install the CNI Cilium. This is done in 2 parts.
+1. Installing the Cilium CLI
+2. Running Cilium Install.
+
 ```
-kubectl apply -f calico.yaml
+#install cilium
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=arm64
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+cilium install
 ```
 
+Cilium will be deployed on nodes as you add them automatically.
 
 
 #### **Adding a node to a cluster steps**
@@ -362,14 +389,7 @@ kubectl apply -f calico.yaml
 kubeadm join (ip address : port) --token (token) --discovery-token-ca-cert-hash (hash)
 ```
 
-
-apply calico config
-
-```
-kubectl apply -f calico.yaml
-```
-
-#### **Add node to cluster**
+### **Add node to cluster**
 * make sure it passes the ansible playbook
 * obtain token
 
@@ -409,13 +429,6 @@ eafc5fe6462d3e29e0c13ce0df5f1d38bb8d31dcdf10b0803275289181b6f179
 </details>
 
 ## **Networking**
-Overlay networks (software defined networking)
-* flannel -layer 3 virtual network
-* calico - L3 and policy based traffic management
-* weave net - multi-host network
-
-we will use calico in  this example
-
 
 ### **Ports**
 
@@ -435,70 +448,43 @@ we will use calico in  this example
 | NodePort | 30000-32767 | All | 
 
 
-### **Cilium Notes**
-https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/
+### **MetalLB**
+MetalLB is a solution to allow mapping of ip addresses to services. MetalLB can do ip address sharing for services, but at this time, it is assumed that you will have a pool of IP addresses and request an ip address for your service as a part of the service config. As i am not planing on hosting more than a handful of services at any given time, this should work out!
 
-installing Cilium instead of calico.
+#### **Prep**
 
-
-```
-CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/master/stable.txt)
-CLI_ARCH=arm64
-curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
-sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
-sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
-rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+Following their [installation page](https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml), update your config map for kube-proxy
 
 ```
-cilium wont start 
-
-possible solution!
-https://github.com/cilium/cilium/issues/20901
-
-references/logs
-https://answers.launchpad.net/ubuntu/+question/702382
-
-https://github.com/cilium/cilium/issues/22482
-
-https://github.com/cilium/cilium/issues/26274
-
-level=info msg="Establishing connection to apiserver" host="https://10.96.0.1:443" subsys=k8s-client
-level=info msg="Connected to apiserver" subsys=k8s-client
-level=info msg="Start hook executed" duration=24.560053ms function="client.(*compositeClientset).onStart" subsys=hive
-level=info msg="Start hook executed" duration=73.603937ms function="cmd.newDatapath.func1 (daemon_main.go:1631)" subsys=hive
-level=info msg="Start hook executed" duration="19.944µs" function="*resource.resource[*k8s.io/api/core/v1.Node].Start" subsys=hive
-level=info msg="Start hook executed" duration="3.797µs" function="*resource.resource[*github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2.CiliumNode].Start" subsys=hive
-level=info msg="Auto-disabling \"enable-node-port\", \"enable-external-ips\", \"bpf-lb-sock\", \"enable-host-port\" features and falling back to \"enable-host-legacy-routing\"" subsys=daemon   
-level=info msg="Inheriting MTU from external network interface" device=wlan0 ipAddr=192.168.1.230 mtu=1500 subsys=mtu
-level=error msg="Start hook failed" error="daemon creation failed: unable to setup device manager: protocol not supported" function="cmd.newDaemonPromise.func1 (daemon_main.go:1684)" subsys=hive
-level=info msg=Stopping subsys=hive
-level=info msg="Stop hook executed" duration="45.13µs" function="*resource.resource[*github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2.CiliumNode].Stop" subsys=hive
-level=info msg="Stop hook executed" duration="60.203µs" function="*resource.resource[*k8s.io/api/core/v1.Node].Stop" subsys=hive
-level=info msg="Stop hook executed" duration="69.129µs" function="client.(*compositeClientset).onStop" subsys=hive
-level=info msg="Stopped gops ser
+kubectl edit configmap -n kube-system kube-proxy
+```
+The config needs to have strict ARP: set to true
 
 ```
-kubectl delete -f calico.yaml
-
-kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+mode: "ipvs"
+ipvs:
+  strictARP: true
 ```
 
-### **MetalLB Install**
-following their [installation page](https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml), it is not clear when using helm what the process to apply a config is using a "CR". i THINK that means custom resource. using the simple manifest will leverage config maps, so thats how we will roll today.
+#### **Install**
 
-apparently this used to be done via configmaps, but that has been abandond in support of custom resources... which sound shady as hell.
+There are several ways to install MetalLb, we are going to use a traditional manifest.
 
-installing a custom resource is apparently as simple as producing yaml document and applying it
+```
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml
+```
 
+#### **Configuration**
+
+This used to be done via configmaps, but that has been abandoned in support of custom resources. Installing a custom resource is apparently as simple as producing yaml document and applying it.
 
 ```
 kubectl apply -f ipaddrespoolcr.yaml
 ```
 
-WOO success
-
-valid custom config is
-
+The below configuration shows an address pool of 2 addresses 192.168.1.239 and 240. It also contains the L2Advertizement, which is one of the methods MetalLB can work. These, or their alternate configurations (BGP etc) must be present or the MetalLB nodes will effectively be idle. 
 ```
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -515,6 +501,9 @@ metadata:
   name: advert
   namespace: metallb-system
 ```
+
+## **Certificate management**
+TBD - own smithsonite.net. i assume that nginx configurations will need to be passed into containers on startup to host those certificates.
 
 ## **Operations**
 kubectl - primary tool
