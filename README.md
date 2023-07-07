@@ -505,6 +505,12 @@ metadata:
 ## **Certificate management**
 TBD - own smithsonite.net. i assume that nginx configurations will need to be passed into containers on startup to host those certificates.
 
+* https://cert-manager.io/docs/tutorials/acme/nginx-ingress/
+* 
+* https://www.thinktecture.com/en/kubernetes/ssl-certificates-with-cert-manager-in-kubernetes/
+
+* 
+
 ## **Operations**
 kubectl - primary tool
 * operations
