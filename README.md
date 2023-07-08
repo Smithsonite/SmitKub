@@ -36,6 +36,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [**Install**](#install)
       - [**Configuration**](#configuration)
   - [**Certificate management**](#certificate-management)
+    - [**NGINX Ingress**](#nginx-ingress)
   - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
@@ -502,6 +503,9 @@ metadata:
   namespace: metallb-system
 ```
 
+
+
+
 ## **Certificate management**
 TBD - own smithsonite.net. i assume that nginx configurations will need to be passed into containers on startup to host those certificates.
 
@@ -509,7 +513,17 @@ TBD - own smithsonite.net. i assume that nginx configurations will need to be pa
 * 
 * https://www.thinktecture.com/en/kubernetes/ssl-certificates-with-cert-manager-in-kubernetes/
 
-* 
+### **NGINX Ingress**
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/baremetal/deploy.yaml
+
+Ho boy, this is exactly what i need! 
+
+once this is deployed (a modified version of the above web manifest can be found under [boostrap/nginx-ingress.yaml](/bootstrap/nginx-ingress.yaml)) We create ingress objects to instruct the ingress controller on how to send traffic based on domain or path to different services.
+https://www.youtube.com/watch?v=72zYxSxifpM
+
+So the ingress worked as advertized. sample files can be found under [bootstrap/ingress sample](bootstrap/ingress%20sample/). 
+
 
 ## **Operations**
 kubectl - primary tool
