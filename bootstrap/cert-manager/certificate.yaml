@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   dnsNames:
-    - "*.home.smithsonite.net"
+    - home.smithsonite.net
   secretName: example-app-tls
   issuerRef:
     name: letsencrypt-cluster-issuer

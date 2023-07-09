@@ -7,10 +7,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - "*.home.smithsonite.net"
+    - home.smithsonite.net
     secretName: example-app-tls
   rules:
-  - host: "home.smithsonite.net"
+  - host: home.smithsonite.net
     http:
       paths:
       - path: /
