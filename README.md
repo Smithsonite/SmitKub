@@ -548,6 +548,24 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 
 
+Success
+The bootstrap folder has been updated with an example application which stores the 
+
+i should make a mermaid diagram of this (and will shortly).
+
+* Metallb pool configured
+* nginx ingress controller deployed
+  * can we make it consistently get assigned the first address in the pool? perhaps it gets its own metal LB pool with only 1 ip address?
+* cert manager deployed
+  * cert-issuer for nginx for the "home.smithsonite.net" created
+  * certificate request for home.smithsonite.net created
+* ingress map for the host home.smithsonite.net was created
+  * services are configured for nodeport (vs load balancer) as the nginx ingress load balancer is the only ip address needed.
+
+next steps. 
+create another ip address pool for plex. configure it and its service to have an avaliable external ip.
+
+
 ## **Operations**
 kubectl - primary tool
 * operations
