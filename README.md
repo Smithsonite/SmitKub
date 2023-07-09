@@ -37,6 +37,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [**Configuration**](#configuration)
   - [**Certificate management**](#certificate-management)
     - [**NGINX Ingress**](#nginx-ingress)
+      - [**Troubleshooting**](#troubleshooting)
   - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
@@ -523,6 +524,28 @@ once this is deployed (a modified version of the above web manifest can be found
 https://www.youtube.com/watch?v=72zYxSxifpM
 
 So the ingress worked as advertized. sample files can be found under [bootstrap/ingress sample](bootstrap/ingress%20sample/). 
+
+
+#### **Troubleshooting**
+
+something is off with metallb. it will stop responding after a few min. 
+
+https://stackoverflow.com/questions/60796696/loadbalancer-using-metallb-on-bare-metal-rpi-cluster-not-working-after-installat#:~:text=MetalLB%20layer2%20mode%20doesn%27t%20receive%20broadcast%20packets%20unless,of%20the%20file%20%40reboot%20sudo%20ifconfig%20wlan0%20promisc
+
+https://github.com/metallb/metallb/issues/253
+
+sudo apt install net-tools
+sudo ifconfig wlan0 promisc
+
+do this on all worker nodes
+
+### **Cert-Manager**
+https://www.bing.com/videos/search?q=that+devops+guy+kubernetes+certificates&&view=detail&mid=735F2AE4292848F3A161735F2AE4292848F3A161&&FORM=VRDGAR&ru=%2Fvideos%2Fsearch%3Fq%3Dthat%2Bdevops%2Bguy%2Bkubernetes%2Bcertificates%26FORM%3DHDRSC4
+
+https://cert-manager.io/docs/installation/
+
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
+
 
 
 ## **Operations**
