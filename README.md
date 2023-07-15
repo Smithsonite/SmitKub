@@ -9,6 +9,8 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [**Home Network Setup**](#home-network-setup)
 - [**Storage**](#storage)
     - [*NFS*](#nfs)
+  - [**SAN Network**](#san-network)
+    - [**PI POE**](#pi-poe)
 - [**Ansible Setup**](#ansible-setup)
   - [**RPI Setup**](#rpi-setup)
     - [**Control system "Autobot"**](#control-system-autobot)
@@ -38,6 +40,7 @@ To document and deploy an ansible backed Kubernetes cluster.
   - [**Certificate management**](#certificate-management)
     - [**NGINX Ingress**](#nginx-ingress)
       - [**Troubleshooting**](#troubleshooting)
+    - [**Cert-Manager**](#cert-manager)
   - [**Operations**](#operations)
   - [**Resources**](#resources)
   - [**Output**](#output)
@@ -118,6 +121,14 @@ update: it seems that mounting a local volume requires a node affinity... meanin
 [resource](https://phoenixnap.com/kb/ubuntu-nfs-server#:~:text=1%20Install%20NFS%20Kernel%20Server.%20Start%20setting%20up,%E2%80%9Cy%E2%80%9D%20and%20press%20ENTER%20to%20start%20the%20installation.)
 
 </details>
+
+## **SAN Network**
+After the failure of both using an SMB and an NFS share for labs/tests, an ISCSI solution is to be implemented. This will include a TP-Link TL-SG108PE (notes for firmware: hardware version stamped on the package is 5.6. Hardware version in the management interface is 5.0.)
+
+The SAN will use the NIC's for all of the devices (vs wifi). The network is at 192.168.2.0/24 (this may get tuned at a later date).
+
+### **PI POE**
+I had been reluctant to get a POE solution setup up until this point. The requirement of reliable ISCSI storage for the cluster has made this something to investigate. I have ordered a [POE+](https://www.raspberrypi.com/products/poe-plus-hat/) hat. This has some iffy reviews from people i trust (Jeff Geerling etc), but we will see how well it works. The enclosure i am using has active cooling, and the fans may be able to be disconnected from these as i hear they are quite loud, but they are also supposedly controlled by the temperature of hte unit. 
 
 # **Ansible Setup**
 The control plane is autobot.smithsonite.home. From this system we can control the other 3. 
