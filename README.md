@@ -31,6 +31,7 @@ To document and deploy an ansible backed Kubernetes cluster.
       - [**Creating a control plane node**](#creating-a-control-plane-node)
       - [**Adding a node to a cluster steps**](#adding-a-node-to-a-cluster-steps)
     - [**Add node to cluster**](#add-node-to-cluster)
+    - [**K9s**](#k9s)
   - [**Networking**](#networking)
     - [**Ports**](#ports)
     - [**MetalLB**](#metallb)
@@ -440,6 +441,10 @@ eafc5fe6462d3e29e0c13ce0df5f1d38bb8d31dcdf10b0803275289181b6f179
 ```
 
 </details>
+
+### **K9s**
+K9s is a quasi-graphical tool to mange kubernetes clusters. This is a simple bin/exe that you can add to your path, or use the package managers they list in their [installation instructions](https://k9scli.io/topics/install/). 
+
 
 ## **Networking**
 
