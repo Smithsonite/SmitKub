@@ -10,6 +10,7 @@ To document and deploy an ansible backed Kubernetes cluster.
 - [**Storage**](#storage)
     - [*NFS*](#nfs)
   - [**SAN Network**](#san-network)
+    - [**SAN Notes**](#san-notes)
     - [**PI POE**](#pi-poe)
 - [**Ansible Setup**](#ansible-setup)
   - [**RPI Setup**](#rpi-setup)
@@ -89,7 +90,7 @@ The nodes have DHCP reservations for the "smithsonite.home" network. Their infor
 | smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | |
 | smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | |
 | smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | |
-| SMITSTORE | 18:31:BF:A9:49:40 | 192.168.1.1 | |
+| SMITSTORE | D8:3A:DD:29:4D:6D | 192.168.1.250 | |
 
 # **Storage**
 
@@ -127,6 +128,16 @@ update: it seems that mounting a local volume requires a node affinity... meanin
 After the failure of both using an SMB and an NFS share for labs/tests, an ISCSI solution is to be implemented. This will include a TP-Link TL-SG108PE (notes for firmware: hardware version stamped on the package is 5.6. Hardware version in the management interface is 5.0.)
 
 The SAN will use the NIC's for all of the devices (vs wifi). The network is at 192.168.2.0/24 (this may get tuned at a later date).
+
+### **SAN Notes**
+
+```
+sudo apt install targetcli-fb
+targetcli
+cd iscsi/
+create
+
+```
 
 ### **PI POE**
 I had been reluctant to get a POE solution setup up until this point. The requirement of reliable ISCSI storage for the cluster has made this something to investigate. I have ordered a [POE+](https://www.raspberrypi.com/products/poe-plus-hat/) hat. This has some iffy reviews from people i trust (Jeff Geerling etc), but we will see how well it works. The enclosure i am using has active cooling, and the fans may be able to be disconnected from these as i hear they are quite loud, but they are also supposedly controlled by the temperature of hte unit. 
