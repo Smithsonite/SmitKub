@@ -132,12 +132,20 @@ The SAN will use the NIC's for all of the devices (vs wifi). The network is at 1
 ### **SAN Notes**
 
 ```
+sudo apt-get install linux-modules-extra-raspi
 sudo apt install targetcli-fb
 targetcli
 cd iscsi/
 create
 
 ```
+
+https://www.reddit.com/r/raspberry_pi/comments/wmubyl/missing_iscsi_target_mod_for_targetcli_on_ubuntu/
+
+"
+Hi, I know this is a little late and you probably already fixed it but yes, I just came across this issue. I upgraded ubuntu and the kernel changed. I also installed: apt install linux-modules-extra-5.15.0-1023-raspi (kernel was previously 5.15.0-1012-raspi) when I upgraded it broke and I had to reinstall with the newer kernel version (linux-modules-extra-5.15.0-1023-raspi
+"
+
 
 ### **PI POE**
 I had been reluctant to get a POE solution setup up until this point. The requirement of reliable ISCSI storage for the cluster has made this something to investigate. I have ordered a [POE+](https://www.raspberrypi.com/products/poe-plus-hat/) hat. This has some iffy reviews from people i trust (Jeff Geerling etc), but we will see how well it works. The enclosure i am using has active cooling, and the fans may be able to be disconnected from these as i hear they are quite loud, but they are also supposedly controlled by the temperature of hte unit. 
