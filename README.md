@@ -164,9 +164,11 @@ the lun is  the lun or volume presented to the client
 iscsi example from kubernetes
 https://github.com/kubernetes/examples/tree/master/volumes/iscsi
 
-This seems to imply that we need the IQN of each node to add to the ACL of the iscsi server.. but we dont need to MOUNT the iscsi drive. that is done via the pod. 
+This seems to imply that we need the IQN of each node to add to the ACL of the iscsi server.. but we don't need to MOUNT the iscsi drive. that is done via the pod. 
 
 we can mount and read from multiple servers, but only write from one.
+
+also, it looks like you can change the iqn from within the iscsi initiator software. not sure if changing the iqn of each device to the same name is good or bad.
 
 ### **PI POE**
 I had been reluctant to get a POE solution setup up until this point. The requirement of reliable ISCSI storage for the cluster has made this something to investigate. I have ordered a [POE+](https://www.raspberrypi.com/products/poe-plus-hat/) hat. This has some iffy reviews from people i trust (Jeff Geerling etc), but we will see how well it works. The enclosure i am using has active cooling, and the fans may be able to be disconnected from these as i hear they are quite loud, but they are also supposedly controlled by the temperature of hte unit. 
