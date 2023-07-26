@@ -147,6 +147,27 @@ Hi, I know this is a little late and you probably already fixed it but yes, I ju
 "
 
 
+iscsi basics
+followed vid https://youtu.be/elWYb2n5dLA
+target cli is the application used to create and manage iscsi targets. 
+iscsiadm is the tool used to locate and mount iscsi targets.
+
+the targetcli command is hierarchal in nature. meaning you create things in particular directories of the hierarchy to configure iscsi
+
+for example, in the below output, a blockstore (block0) is configured under backstores/block. 
+an iscsi iqn is created under iscsi, and it contains tpg1 (i think thats target provider group 1).
+within that you create an acl, the acl is a simply the iqn of your CLIENT, which you will not know until you configure your clients. This must be mapped to a lun to allow access.
+the lun is  the lun or volume presented to the client
+
+![Screenshot](Docs/pics/iscsi_config.png)
+
+iscsi example from kubernetes
+https://github.com/kubernetes/examples/tree/master/volumes/iscsi
+
+This seems to imply that we need the IQN of each node to add to the ACL of the iscsi server.. but we dont need to MOUNT the iscsi drive. that is done via the pod. 
+
+we can mount and read from multiple servers, but only write from one.
+
 ### **PI POE**
 I had been reluctant to get a POE solution setup up until this point. The requirement of reliable ISCSI storage for the cluster has made this something to investigate. I have ordered a [POE+](https://www.raspberrypi.com/products/poe-plus-hat/) hat. This has some iffy reviews from people i trust (Jeff Geerling etc), but we will see how well it works. The enclosure i am using has active cooling, and the fans may be able to be disconnected from these as i hear they are quite loud, but they are also supposedly controlled by the temperature of hte unit. 
 
