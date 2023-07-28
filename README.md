@@ -578,7 +578,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 Ho boy, this is exactly what i need! 
 
-once this is deployed (a modified version of the above web manifest can be found under [boostrap/nginx-ingress.yaml](/bootstrap/nginx-ingress.yaml)) We create ingress objects to instruct the ingress controller on how to send traffic based on domain or path to different services.
+once this is deployed (a modified version of the above web manifest can be found under [bootstrap/nginx-ingress.yaml](/bootstrap/nginx-ingress.yaml)) We create ingress objects to instruct the ingress controller on how to send traffic based on domain or path to different services.
 https://www.youtube.com/watch?v=72zYxSxifpM
 
 So the ingress worked as advertized. sample files can be found under [bootstrap/ingress sample](bootstrap/ingress%20sample/). 
@@ -621,7 +621,7 @@ i should make a mermaid diagram of this (and will shortly).
   * services are configured for nodeport (vs load balancer) as the nginx ingress load balancer is the only ip address needed.
 
 next steps. 
-create another ip address pool for plex. configure it and its service to have an avaliable external ip.
+create another ip address pool for plex. configure it and its service to have an available external ip.
 
 
 ## **Operations**
