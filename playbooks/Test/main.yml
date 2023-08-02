@@ -14,7 +14,7 @@
       ansible.builtin.debug:
         msg: "Smitkub1"
       when:
-        - ansible_facts['eth0']['ipv4']['address'] != '192.168.2.232'
+        - ansible_facts['eth0']['ipv4']['address'] != '192.168.2.233'
         - inventory_hostname == 'smitkub1.smithsonite.home'
 
     # - name: Kube2
