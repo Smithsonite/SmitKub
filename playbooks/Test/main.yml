@@ -6,16 +6,23 @@
 
   tasks:
 
-    - name: Show facts available on the system
-      ansible.builtin.debug:
-        var: ansible_facts
+    # - name: Show facts available on the system
+    #   ansible.builtin.debug:
+    #     var: ansible_facts
 
     - name: Kube1
       ansible.builtin.debug:
         msg: "Smitkub1"
       when:
-        - ansible_facts['eth0']['ipv4']['address'] != '192.168.2.233'
+        - ansible_facts['eth0']['ipv4']['address'] != '192.168.2.232'
         - inventory_hostname == 'smitkub1.smithsonite.home'
+
+    - name: Autobot
+      ansible.builtin.debug:
+        msg: "Autobot"
+      delegate_to: 127.0.0.1
+      when:
+        - ansible_facts['eth0']['ipv4']['address'] != '192.168.2.230'
 
     # - name: Kube2
     #   ansible.builtin.debug:
