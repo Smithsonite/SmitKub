@@ -22,7 +22,7 @@
         msg: "Autobot"
       when:
         - inventory_hostname == 'localhost'
-        - ansible_facts['eth0']['ipv4']['address'] != '192.168.2.232'
+        - ansible_facts['eth0']['ipv4']['address'] != '192.168.2.230'
 
     # - name: Kube2
     #   ansible.builtin.debug:
