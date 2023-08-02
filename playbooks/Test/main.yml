@@ -1,7 +1,7 @@
 ---
 - name: Install KubeCluster
   hosts:
-    - smitkub
+    - localhost
   become: true
 
   tasks:
