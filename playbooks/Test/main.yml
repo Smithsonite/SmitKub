@@ -5,6 +5,11 @@
   become: true
 
   tasks:
+
+    - name: Show facts available on the system
+      ansible.builtin.debug:
+        var: ansible_facts
+
     - name: Kube1
       ansible.builtin.debug:
         msg: "Smitkub1"
