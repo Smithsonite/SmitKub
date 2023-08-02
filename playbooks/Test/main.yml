@@ -8,17 +8,17 @@
     - name: Kube1
       ansible.builtin.debug:
         msg: "Smitkub1"
-      when: (ansible_facts['ansible_eth0']['ipv4']['address'] is not ['192.168.2.232'])
+      when: ansible_facts['ansible_eth0']['ipv4']['address'] is not '192.168.2.232'
 
-    - name: Kube2
-      ansible.builtin.debug:
-        msg: "Smitkub2"
-      when: (inventory_hostname == 'smitkub2.smithsonite.home')
+    # - name: Kube2
+    #   ansible.builtin.debug:
+    #     msg: "Smitkub2"
+    #   when: (inventory_hostname == 'smitkub2.smithsonite.home')
 
-    - name: Kube3
-      ansible.builtin.debug:
-        msg: "Smitkub3"
-      when: (inventory_hostname == 'smitkub3.smithsonite.home')
+    # - name: Kube3
+    #   ansible.builtin.debug:
+    #     msg: "Smitkub3"
+    #   when: (inventory_hostname == 'smitkub3.smithsonite.home')
 
 
 # - name: Copy ISCSI config to smitkub2
