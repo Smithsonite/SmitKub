@@ -84,17 +84,20 @@ This cluster is designed around having 4 raspberry pi 4b 8gb units. One control 
 The nodes have DHCP reservations for the "smithsonite.home" network. Their information is as follows
 
 
-| Name | Mac | Primary IP | Alternate IP |
-| :---: | :---: | :---: | :---: |
-| autobot | E4:5F:01:B9:98:00 |192.168.1.230 | 192.168.2.235 |
-| smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | |
-| smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | |
-| smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | |
-| SMITSTORE | D8:3A:DD:29:4D:6D | 192.168.1.250 | |
+| Name | WiFiMac | Primary IP | Ethernet Mac |ISCSI |
+| :---: | :---: | :---: | :---: | :---: |
+| autobot | E4:5F:01:B9:98:00 |192.168.1.230 | E4:5F:01:B9:97:FF |192.168.2.230 |
+| smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | DC:A6:32:C7:00:6F | 192.168.2.232 |
+| smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | DC:A6:32:C1:69:C1 | 192.168.2.233 |
+| smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | E4:5F:01:6F:6D:32 | 192.168.2.234 |
+| SMITSTORE | D8:3A:DD:29:4D:6D | 192.168.1.250 | D8:3A:DD:29:4D:6C | 192.168.2.250 |
 
 # **Storage**
 
 SmitStore is currently offline. It was found that NFS servers could not handle the kind of disk reservations that some databases required. As such, all of the notes around NFS are for historical/archive reference. As SAN solution is being evaluated by means of an 8 port switch and an additional RPI4.
+
+Smitstore has been recreated as an iscsi system. in order to get targetcli to work, the additional kernel modules must be installed. this is done in our ansible playbooks, and a playbook to configure smitstore should also include this.
+
 
 <details><summary>Archived SmitStore NFS Notes</summary>
 
@@ -128,6 +131,8 @@ update: it seems that mounting a local volume requires a node affinity... meanin
 After the failure of both using an SMB and an NFS share for labs/tests, an ISCSI solution is to be implemented. This will include a TP-Link TL-SG108PE (notes for firmware: hardware version stamped on the package is 5.6. Hardware version in the management interface is 5.0.)
 
 The SAN will use the NIC's for all of the devices (vs wifi). The network is at 192.168.2.0/24 (this may get tuned at a later date).
+
+The network configuration is defined as a netplan document and each smitkub member has their own file defined in thee roles. As long as the Ansible playbooks are run, the network will be configured.
 
 ### **SAN Notes**
 
@@ -510,6 +515,9 @@ K9s is a quasi-graphical tool to mange kubernetes clusters. This is a simple bin
 
 ### **MetalLB**
 MetalLB is a solution to allow mapping of ip addresses to services. MetalLB can do ip address sharing for services, but at this time, it is assumed that you will have a pool of IP addresses and request an ip address for your service as a part of the service config. As i am not planing on hosting more than a handful of services at any given time, this should work out!
+
+**NOTE**
+MetalLB on raspberry pi wifi requires promiscuous mode to work for more than about 5 min. This is being enabled on startup by the custom promiscuous service installed and enabled by the kubeworker/kubecontroller roles. 
 
 #### **Prep**
 
