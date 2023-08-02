@@ -1,0 +1,44 @@
+---
+- name: Install KubeCluster
+  hosts:
+    - smitkub
+  become: true
+
+  tasks:
+    - name: Kube1
+      ansible.builtin.debug:
+        msg: "Smitkub1"
+      when: (inventory_hostname == 'smitkub1.smithsonite.home')
+
+    - name: Kube2
+      ansible.builtin.debug:
+        msg: "Smitkub2"
+      when: (inventory_hostname == 'smitkub2.smithsonite.home')
+
+    - name: Kube3
+      ansible.builtin.debug:
+        msg: "Smitkub3"
+      when: (inventory_hostname == 'smitkub3.smithsonite.home')
+
+
+# - name: Copy ISCSI config to smitkub2
+#   ansible.builtin.copy:
+#     src: smitkub2-eth0.yml
+#     dest: /etc/netplan/10-eth0.yaml
+#     owner: root
+#     group: root
+#     mode: '0644'
+#   when: (inventory_hostname == 'smitkub2.smithsonite.home') and
+#         (ansible_facts['ansible_eth0']['ipv4']['address'] is not ['192.168.2.233'])
+#   notify: Restart netplan
+
+# - name: Copy ISCSI config to smitkub3
+#   ansible.builtin.copy:
+#     src: smitkub3-eth0.yml
+#     dest: /etc/netplan/10-eth0.yaml
+#     owner: root
+#     group: root
+#     mode: '0644'
+#   when: (inventory_hostname == 'smitkub3.smithsonite.home') and
+#         (ansible_facts['ansible_eth0']['ipv4']['address'] is not ['192.168.2.234'])
+#   notify: Restart netplan
