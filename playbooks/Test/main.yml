@@ -8,7 +8,8 @@
     - name: Kube1
       ansible.builtin.debug:
         msg: "Smitkub1"
-      when: (inventory_hostname == 'smitkub1.smithsonite.home')
+      when: (inventory_hostname == 'smitkub1.smithsonite.home') and
+            (ansible_facts['ansible_eth0']['ipv4']['address'] is not ['192.168.2.232'])
 
     - name: Kube2
       ansible.builtin.debug:
