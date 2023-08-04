@@ -11,6 +11,9 @@ To document and deploy an ansible backed Kubernetes cluster.
     - [*NFS*](#nfs)
   - [**SAN Network**](#san-network)
     - [**SAN Notes**](#san-notes)
+      - [**ISCSI basics**](#iscsi-basics)
+        - [**Target Config**](#target-config)
+        - [**Initiator config**](#initiator-config)
     - [**PI POE**](#pi-poe)
 - [**Ansible Setup**](#ansible-setup)
   - [**RPI Setup**](#rpi-setup)
@@ -84,17 +87,17 @@ This cluster is designed around having 4 raspberry pi 4b 8gb units. One control 
 The nodes have DHCP reservations for the "smithsonite.home" network. Their information is as follows
 
 
-| Name | WiFiMac | Primary IP | Ethernet Mac |ISCSI |
-| :---: | :---: | :---: | :---: | :---: |
-| autobot | E4:5F:01:B9:98:00 |192.168.1.230 | E4:5F:01:B9:97:FF |192.168.2.230 |
-| smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | DC:A6:32:C7:00:6F | 192.168.2.232 |
-| smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | DC:A6:32:C1:69:C1 | 192.168.2.233 |
-| smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | E4:5F:01:6F:6D:32 | 192.168.2.234 |
+| Name | WiFiMac | Primary IP | Ethernet Mac |ISCSI Mac | iqn |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| autobot | E4:5F:01:B9:98:00 |192.168.1.230 | E4:5F:01:B9:97:FF |192.168.2.230 | iqn.2004-10.com.ubuntu:01:af8fb86b74d |
+| smitkub1 | DC:A6:32:C7:00:71 | 192.168.1.232 | DC:A6:32:C7:00:6F | 192.168.2.232 | iqn.2004-10.com.ubuntu:01:66b725dce2be |
+| smitkub2 | DC:A6:32:C1:69:C2 | 192.168.1.233 | DC:A6:32:C1:69:C1 | 192.168.2.233 | iqn.2004-10.com.ubuntu:01:b59f8994a471 |
+| smitkub3 | E4:5F:01:6F:6D:33 | 192.168.1.234 | E4:5F:01:6F:6D:32 | 192.168.2.234 | iqn.2004-10.com.ubuntu:01:d4aaefe7474c |
 | SMITSTORE | D8:3A:DD:29:4D:6D | 192.168.1.250 | D8:3A:DD:29:4D:6C | 192.168.2.250 |
 
 # **Storage**
 
-SmitStore is currently offline. It was found that NFS servers could not handle the kind of disk reservations that some databases required. As such, all of the notes around NFS are for historical/archive reference. As SAN solution is being evaluated by means of an 8 port switch and an additional RPI4.
+SmitStore as an NFS server is currently offline. It was found that NFS servers could not handle the kind of disk reservations that some databases required. As such, all of the notes around NFS are for historical/archive reference. As SAN solution is being evaluated by means of an 8 port switch and an additional RPI4.
 
 Smitstore has been recreated as an iscsi system. in order to get targetcli to work, the additional kernel modules must be installed. this is done in our ansible playbooks, and a playbook to configure smitstore should also include this.
 
@@ -142,17 +145,17 @@ sudo apt install targetcli-fb
 targetcli
 cd iscsi/
 create
+cd /backstores/block
+create block0 /dev/sda
+cd /iscsi/iqn.2003-01.org.linux-iscsi.ubuntu.aarch64:sn.eadcca96319d/tpg1/acls
+create iqn.1991-05.com.microsoft:your.iscsi.initiator.iqn.com
+cd /iscsi/iqn.2003-01.org.linux-iscsi.ubuntu.aarch64:sn.eadcca96319d/tpg1/luns
+create /backstores/block/block0
 
 ```
 
-https://www.reddit.com/r/raspberry_pi/comments/wmubyl/missing_iscsi_target_mod_for_targetcli_on_ubuntu/
-
-"
-Hi, I know this is a little late and you probably already fixed it but yes, I just came across this issue. I upgraded ubuntu and the kernel changed. I also installed: apt install linux-modules-extra-5.15.0-1023-raspi (kernel was previously 5.15.0-1012-raspi) when I upgraded it broke and I had to reinstall with the newer kernel version (linux-modules-extra-5.15.0-1023-raspi
-"
-
-
-iscsi basics
+#### **ISCSI basics**
+##### **Target Config**
 followed vid https://youtu.be/elWYb2n5dLA
 target cli is the application used to create and manage iscsi targets. 
 iscsiadm is the tool used to locate and mount iscsi targets.
@@ -174,6 +177,62 @@ This seems to imply that we need the IQN of each node to add to the ACL of the i
 we can mount and read from multiple servers, but only write from one.
 
 also, it looks like you can change the iqn from within the iscsi initiator software. not sure if changing the iqn of each device to the same name is good or bad.
+
+references
+
+https://www.stephenwagner.com/2020/03/18/how-to-raspberry-pi-4-as-an-iscsi-san-iscsi-target/
+
+
+##### **Initiator config**
+
+* Get the initiator IQN
+```
+sudo systemctl restart iscsid open-iscsi
+```
+* gather the iqn from /etc/iscsi/initiatorname.iscsi
+* create an  iscsi target acl (the section above)
+* perform a discovery
+```
+sudo iscsiadm -m discovery -t sendtargets -p
+```
+* login
+```
+sudo iscsiadm --mode node --targetname iqn.2003-01.org.linux-iscsi.smitstore.aarch64:sn.f0e24f7eabd9 --portal 192.168.2.250 --login
+```
+
+
+log into all targets
+
+```
+sudo iscsiadm -m node -l
+
+```
+
+log out of all targets
+
+```
+sudo iscsiadm -m node -u
+
+```
+
+check the disk using fdisk
+```
+sudo fdisk -l
+
+```
+
+
+**references**
+
+https://manjaro.site/how-to-connect-to-iscsi-volume-from-ubuntu-20-04/
+
+https://library.netapp.com/ecmdocs/ECMP1217221/html/GUID-2A8546C7-347A-40B0-B937-4B31DAAA16DA.html#:~:text=Steps%201%20Enter%20the%20following%20command%20to%20discover,all%20the%20active%20iSCSI%20sessions%3Aiscsiadm%20--mode%20session%20
+
+https://www.golinuxcloud.com/delete-remove-inactive-iscsi-target-rhel-7-linux/
+
+
+
+
 
 ### **PI POE**
 I had been reluctant to get a POE solution setup up until this point. The requirement of reliable ISCSI storage for the cluster has made this something to investigate. I have ordered a [POE+](https://www.raspberrypi.com/products/poe-plus-hat/) hat. This has some iffy reviews from people i trust (Jeff Geerling etc), but we will see how well it works. The enclosure i am using has active cooling, and the fans may be able to be disconnected from these as i hear they are quite loud, but they are also supposedly controlled by the temperature of hte unit. 
