@@ -6,7 +6,7 @@ metadata:
 spec:
   containers:
   - name: iscsipd-rw
-    image: registry.hub.docker.com/kubernetes/pause
+    image: nginx:latest
     volumeMounts:
     - mountPath: "/mnt/iscsipd"
       name: iscsipd-rw
