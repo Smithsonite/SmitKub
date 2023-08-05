@@ -6,14 +6,14 @@ metadata:
 spec:
   containers:
   - name: iscsipd-rw
-    image: kubernetes/pause
+    image: registry.hub.docker.com/kubernetes/pause
     volumeMounts:
     - mountPath: "/mnt/iscsipd"
       name: iscsipd-rw
   volumes:
   - name: iscsipd-rw
     iscsi:
-      targetPortal: 10.0.2.15:3260
+      targetPortal: 192.168.2.250:3260
       portals: ['192.168.2.250:3260']
       iqn: iqn.2003-01.org.linux-iscsi.smitstore.aarch64:sn.85274e080c83
       lun: 0
