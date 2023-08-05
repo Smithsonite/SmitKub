@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: iscsipd2
+spec:
+  containers:
+  - name: iscsipd-r
+    image: nginx:latest
+    volumeMounts:
+    - mountPath: "/mnt/iscsipd"
+      name: iscsipd-r
+  volumes:
+  - name: iscsipd-rw
+    iscsi:
+      targetPortal: 192.168.2.250:3260
+      portals: ['192.168.2.250:3260']
+      iqn: iqn.2003-01.org.linux-iscsi.smitstore.aarch64:sn.85274e080c83
+      lun: 0
+      fsType: ext4
+      readOnly: true
