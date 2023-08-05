@@ -137,6 +137,8 @@ The SAN will use the NIC's for all of the devices (vs wifi). The network is at 1
 
 The network configuration is defined as a netplan document and each smitkub member has their own file defined in thee roles. As long as the Ansible playbooks are run, the network will be configured.
 
+test
+
 ### **SAN Notes**
 
 ```
