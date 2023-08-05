@@ -155,6 +155,11 @@ create /backstores/block/block0
 ```
 
 #### **ISCSI basics**
+Only one initiator can write if mounted to multiple clients. if a read only mount is configured on a separate client, the contents wont necessarily update until a dismount/remount. 
+
+For kubernetes, we only need to configure the luns with ACL's for each host's iqn. after that, kubernetes takes care of the mounting easily!
+
+
 ##### **Target Config**
 followed vid https://youtu.be/elWYb2n5dLA
 target cli is the application used to create and manage iscsi targets. 
